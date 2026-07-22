@@ -1,0 +1,67 @@
+{% extends 'vente/base.html' %}
+{% load static %}
+
+{% block title %}Inscription Client - Icommerce{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold"><i class="fa-solid fa-user-plus text-warning me-2"></i>Créer un compte</h3>
+                        <p class="text-muted">Inscrivez-vous pour passer vos commandes plus rapidement</p>
+                    </div>
+
+                    <form method="POST" action="{% url 'vente:inscription' %}">
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+                            <!-- Nom -->
+                            <div class="col-md-6">
+                                <label for="nom" class="form-label fw-semibold">Nom</label>
+                                <input type="text" class="form-control" id="nom" name="nom" required>
+                            </div>
+
+                            <!-- Prénom -->
+                            <div class="col-md-6">
+                                <label for="prenom" class="form-label fw-semibold">Prénom</label>
+                                <input type="text" class="form-control" id="prenom" name="prenom" required>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-12">
+                                <label for="email" class="form-label fw-semibold">Adresse Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="nom@exemple.com" required>
+                            </div>
+
+                            <!-- Téléphone -->
+                            <div class="col-12">
+                                <label for="telephone" class="form-label fw-semibold">Numéro de Téléphone</label>
+                                <input type="tel" class="form-control" id="telephone" name="telephone" placeholder="+237..." required>
+                            </div>
+
+                            <!-- Adresse -->
+                            <div class="col-12">
+                                <label for="adresse" class="form-label fw-semibold">Adresse complète</label>
+                                <textarea class="form-control" id="adresse" name="adresse" rows="3" placeholder="Quartier" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-warning btn-lg fw-bold text-dark">
+                                S'inscrire
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 border-top pt-3">
+                        <p class="text-muted mb-0">Déjà inscrit ? <a href="{% url 'vente:Login_user' %}" class="text-warning text-decoration-none fw-bold">Se connecter</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

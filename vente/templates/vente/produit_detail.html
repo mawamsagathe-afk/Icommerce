@@ -1,0 +1,66 @@
+{% extends 'vente/base.html' %}
+{% load static %}
+
+{% block title %}{{ produit.designation }} - Icommerce{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'vente:catalogue' %}" class="text-decoration-none">Catalogue</a></li>
+            <li class="breadcrumb-item text-muted">{{ produit.categorie.nom }}</li>
+            <li class="breadcrumb-item active" aria-current="page">{{ produit.designation }}</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <!-- Image Produit -->
+                <div class="col-md-6 text-center bg-light p-4 rounded d-flex align-items-center justify-content-center" style="min-height: 350px;">
+                    {% if produit.image %}
+                        <img src="{{ produit.image.url }}" class="img-fluid rounded" style="max-height: 350px;" alt="{{ produit.designation }}">
+                    {% else %}
+                        <div class="text-muted">
+                            <i class="fa-solid fa-image fa-5x mb-3"></i>
+                            <p>Aucune image disponible</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Détails Produit -->
+                <div class="col-md-6 d-flex flex-column justify-content-between">
+                    <div>
+                        <span class="badge bg-info text-dark mb-2">{{ produit.categorie.nom }}</span>
+                        <h2 class="fw-bold text-dark mb-3">{{ produit.designation }}</h2>
+                        <h3 class="text-warning fw-bold mb-4">{{ produit.prix }} FCFA</h3>
+                        
+                        <h5 class="fw-bold">Description :</h5>
+                        <p class="text-muted">{{ produit.description|linebreaks }}</p>
+
+                        <div class="mb-3">
+                            <span class="fw-semibold">Disponibilité :</span>
+                            {% if produit.stock > 0 %}
+                                <span class="badge bg-success">En stock ({{ produit.stock }} unités)</span>
+                            {% else %}
+                                <span class="badge bg-danger">En rupture de stock</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Action d'ajout -->
+                    <div class="pt-3 border-top mt-4">
+                        {% if produit.stock > 0 %}
+                            <a href="{% url 'vente:ajouter_au_panier' produit.id %}" class="btn btn-warning btn-lg w-100 text-dark fw-bold">
+                                <i class="fa-solid fa-cart-plus me-2"></i> Ajouter au panier
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary btn-lg w-100" disabled>Rupture de stock</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

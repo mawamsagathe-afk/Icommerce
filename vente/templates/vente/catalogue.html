@@ -1,0 +1,102 @@
+{% extends 'vente/base.html' %}
+{% load static %}
+
+{% block title %}Catalogue - Icommerce{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- HERO HEADER -->
+    <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-white shadow-sm border">
+        <div class="col-lg-8 px-0">
+            <h1 class="display-5 fw-bold text-dark">Nos Produits</h1>
+            <p class="lead my-3 text-secondary">Trouvez les meilleurs articles disponibles dans notre boutique.</p>
+        </div>
+    </div>
+
+    <!-- BARRE DE RECHERCHE ET FILTRE CATEGORIE -->
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-body bg-white rounded">
+            <form method="GET" action="{% url 'vente:catalogue' %}" class="row g-3">
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0 bg-light" placeholder="Rechercher par désignation..." value="{{ request.GET.q }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="categorie" class="form-select bg-light">
+                        <option value="">Toutes les catégories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if request.GET.categorie == cat.id|stringformat:"s" %}selected{% endif %}>
+                                {{ cat.nom }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-warning text-dark fw-bold">Filtrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- GRILLE PRODUITS -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for produit in produits %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="position-relative text-center bg-light rounded-top p-3" style="height: 200px;">
+                        {% if produit.image %}
+                            <img src="{{ produit.image.url }}" class="img-fluid h-100" style="object-fit: contain;" alt="{{ produit.designation }}">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                <i class="fa-solid fa-image fa-3x"></i>
+                            </div>
+                        {% endif %}
+                        {% if produit.stock > 0 %}
+                            <span class="badge bg-success position-absolute top-0 end-0 m-2">Stock: {{ produit.stock }}</span>
+                        {% else %}
+                            <span class="badge bg-danger position-absolute top-0 end-0 m-2">Rupture</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <small class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.75rem;">
+                            {{ produit.categorie.nom }}
+                        </small>
+                        <h5 class="card-title text-dark h6 fw-bold mb-2 text-truncate">
+                            <a href="{% url 'vente:produit_detail' produit.id %}" class="text-decoration-none text-dark">
+                                {{ produit.designation }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            {{ produit.description|truncatewords:8 }}
+                        </p>
+                        <div class="mt-3 pt-2 border-top">
+                            <span class="h5 mb-0 fw-bold text-dark">{{ produit.prix }} FCFA</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white border-top-0 pt-0 pb-3">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'vente:produit_detail' produit.id %}" class="btn btn-outline-secondary btn-sm">Détails</a>
+                            {% if produit.stock > 0 %}
+                                <a href="{% url 'vente:ajouter_au_panier' produit.id %}" class="btn btn-warning text-dark fw-semibold btn-sm">
+                                    <i class="fa-solid fa-cart-plus me-1"></i> Ajouter
+                                </a>
+                            {% else %}
+                                <button class="btn btn-secondary btn-sm" disabled>Indisponible</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted fs-5">Aucun produit ne correspond à votre recherche.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
