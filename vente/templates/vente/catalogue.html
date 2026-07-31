@@ -42,10 +42,15 @@
     </div>
 
     <!-- GRILLE PRODUITS -->
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-4">
         {% for produit in produits %}
             <div class="col">
-                <div class="card h-100 shadow-sm border-0">
+                <div class="card h-100 border-0 rounded-4"
+                   style="box-shadow:
+                   0 20px 40px rgba(0,0,0,0.30),
+                   0 10px 20px rgba(0,0,0,0.20),
+                   inset 0 3px 8px rgba(255,255,255,0.7),
+                   inset 0 -5px 10px rgba(0,0,0,0.15);">
                     <div class="position-relative text-center bg-light rounded-top p-3" style="height: 200px;">
                         {% if produit.image %}
                             <img src="{{ produit.image.url }}" class="img-fluid h-100" style="object-fit: contain;" alt="{{ produit.designation }}">
@@ -55,7 +60,7 @@
                             </div>
                         {% endif %}
                         {% if produit.stock > 0 %}
-                            <span class="badge bg-success position-absolute top-0 end-0 m-2">Stock: {{ produit.stock }}</span>
+                          
                         {% else %}
                             <span class="badge bg-danger position-absolute top-0 end-0 m-2">Rupture</span>
                         {% endif %}
@@ -74,8 +79,10 @@
                             {{ produit.description|truncatewords:8 }}
                         </p>
                         <div class="mt-3 pt-2 border-top">
-                            <span class="h5 mb-0 fw-bold text-dark">{{ produit.prix }} FCFA</span>
-                        </div>
+    <span class="h5 mb-0 fw-bold text-dark">
+        {{ produit.prix_vente }} FCFA
+    </span>
+</div>
                     </div>
 
                     <div class="card-footer bg-white border-top-0 pt-0 pb-3">

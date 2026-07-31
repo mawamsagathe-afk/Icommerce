@@ -16,7 +16,7 @@
     <!-- NAVIGATION -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold text-warning" href="{% url 'vente:catalogue' %}">
+            <a class="navbar-brand fw-bold text-warning" href="{% url 'vente:login_user' %}">
                 <i class="fa-solid fa-store me-2"></i>Icommerce
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -44,7 +44,7 @@
 
                     <li class="nav-item">
                         <a class="btn btn-warning ms-2" href="{% url 'vente:inscription' %}">
-                            Connexion
+                            Deconnexion
                         </a>
                     </li>
                 </ul>
@@ -81,7 +81,7 @@
                 </div>
                 <div class="col-md-6 mb-3 text-md-end">
                     <p class="mb-1">&copy; 2026 Icommerce. Tous droits réservés.</p>
-                    <a href="{% url 'vente:catalogue' %}" class="text-muted text-decoration-none me-3">Catalogue</a>
+                    <a href="{% url 'vente:login_user' %}" class="text-muted text-decoration-none me-3">Catalogue</a>
                     <a href="{% url 'vente:voir_panier' %}" class="text-muted text-decoration-none">Panier</a>
                 </div>
             </div>
@@ -96,7 +96,7 @@
 </html>
  <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{% url 'vente:catalogue' %}">
+                        <a class="nav-link text-white" href="{% url 'vente:login_user' %}">
                             <i class="fa-solid fa-tags me-1"></i> Catalogue
                         </a>
                     </li>

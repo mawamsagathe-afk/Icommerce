@@ -6,8 +6,8 @@ app_name = 'vente'
 
 urlpatterns = [
     # Catalogue & Détails Produits
-    path('', views.catalogue, name='catalogue'),
-    path('catalogue/', views.catalogue, name='catalogue_alt'),
+    path('', views.Login_user, name='Login_user'),
+    path('catalogue/', views.catalogue, name='catalogue'),
     path('produit/<int:produit_id>/', views.produit_detail, name='produit_detail'),
 
     # Gestion du Panier
@@ -17,6 +17,6 @@ urlpatterns = [
     path('panier/valider/', views.valider_commande, name='valider_commande'),
 
     # Authentification & Inscription
-    path('connexion/', views.Login_user, name='Login_user'),
+    path('connexion/', views.Login_user, name='login_user'),
     path('inscription/', views.inscription, name='inscription'),
 ]

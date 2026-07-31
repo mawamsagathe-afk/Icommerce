@@ -79,7 +79,7 @@ def ajouter_au_panier(request, produit_id):
     else:
         panier[produit_id_str] = {
             'nom': produit.designation,
-            'prix': str(produit.prix),
+            'prix': str(produit.prix_vente),
             'quantite': 1
         }
         messages.success(request, f"{produit.designation} a été ajouté au panier.")
@@ -130,16 +130,35 @@ def inscription(request):
             adresse=adresse
         )
         messages.success(request, "Inscription réussie ! Vous pouvez maintenant vous connecter.")
-        return redirect('vente:Login_user')
+        return redirect('vente:login_user')
 
     return render(request, 'vente/inscription.html')
 
 
+# def Login_user(request):
+#     """
+#     Page de connexion (à personnaliser selon votre système d'auth).
+#     """
+#     return render(request, 'vente/login.html')
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+
 def Login_user(request):
-    """
-    Page de connexion (à personnaliser selon votre système d'auth).
-    """
-    return render(request, 'login.html')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('vente:catalogue')   # Redirection vers le catalogue
+        else:
+            messages.error(request, "Nom d'utilisateur ou mot de passe incorrect.")
+
+    return render(request, 'vente/login.html')
 
 
 def valider_commande(request):

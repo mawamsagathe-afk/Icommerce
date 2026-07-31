@@ -108,3 +108,5 @@ class Livraison(models.Model):
 
     def __str__(self):
         return f"Livraison {self.commande.id}"   
+    
+    

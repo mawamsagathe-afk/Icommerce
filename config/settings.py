@@ -121,7 +121,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# 4. Redirections
+
+ # 4. Redirections
 LOGIN_URL = 'vente:Login_user'
 LOGIN_REDIRECT_URL = 'vente:catalogue'
 LOGOUT_REDIRECT_URL = 'vente:catalogue'
