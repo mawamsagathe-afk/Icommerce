@@ -1,0 +1,306 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Tableau de bord - Icommerce
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold">
+                <i class="fa-solid fa-chart-line me-2"></i>
+                Tableau de bord
+            </h1>
+
+            <p class="text-muted">
+                Gestion de votre boutique Icommerce
+            </p>
+        </div>
+
+        <a href="{% url 'admin:index' %}"
+           class="btn btn-dark">
+            <i class="fa-solid fa-gear me-2"></i>
+            Administration
+        </a>
+
+    </div>
+
+
+    <!-- STATISTIQUES -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- PRODUITS -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Produits
+                            </p>
+
+                            <h2 class="fw-bold">
+                                {{ nombre_produits }}
+                            </h2>
+                        </div>
+
+                        <div class="fs-1 text-warning">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CLIENTS -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Clients
+                            </p>
+
+                            <h2 class="fw-bold">
+                                {{ nombre_clients }}
+                            </h2>
+
+                        </div>
+
+                        <div class="fs-1 text-primary">
+
+                            <i class="fa-solid fa-users"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMMANDES -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Commandes
+                            </p>
+
+                            <h2 class="fw-bold">
+                                {{ nombre_commandes }}
+                            </h2>
+
+                        </div>
+
+                        <div class="fs-1 text-success">
+
+                            <i class="fa-solid fa-cart-shopping"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CHIFFRE AFFAIRES -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Chiffre d'affaires
+                            </p>
+
+                            <h2 class="fw-bold">
+                                {{ chiffre_affaires }} FCFA
+                            </h2>
+
+                        </div>
+
+                        <div class="fs-1 text-success">
+
+                            <i class="fa-solid fa-money-bill-wave"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMMANDES -->
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-dark text-white">
+
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-cart-shopping me-2"></i>
+                        État des commandes
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row text-center">
+
+                        <div class="col-md-3">
+
+                            <h3 class="text-warning">
+                                {{ commandes_attente }}
+                            </h3>
+
+                            <p>
+                                En attente
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <h3 class="text-primary">
+                                {{ commandes_validees }}
+                            </h3>
+
+                            <p>
+                                Validées
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <h3 class="text-success">
+                                {{ commandes_livrees }}
+                            </h3>
+
+                            <p>
+                                Livrées
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <h3 class="text-danger">
+                                {{ commandes_annulees }}
+                            </h3>
+
+                            <p>
+                                Annulées
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STOCK -->
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="fa-solid fa-boxes-stacked me-2"></i>
+
+                        Stock
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body text-center">
+
+                    <h1 class="fw-bold">
+                        {{ stock_total }}
+                    </h1>
+
+                    <p class="text-muted">
+                        Produits disponibles en stock
+                    </p>
+
+                    <a href="{% url 'admin:vente_produit_changelist' %}"
+                       class="btn btn-outline-success">
+
+                        Gérer le stock
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

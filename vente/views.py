@@ -1,9 +1,13 @@
+from decimal import Decimal
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
+from django.db.models import Sum
 
 from .models import (
     Produit,
@@ -76,29 +80,38 @@ def produit_detail(request, produit_id):
 # VOIR LE PANIER
 # =========================================================
 
+@login_required
 def voir_panier(request):
 
-    panier = request.session.get(
-        'panier',
-        {}
-    )
+    panier = request.session.get('panier', {})
 
-    total = 0
+    produits = []
+    total = Decimal('0.00')
 
-    for item_id, item in panier.items():
+    for produit_id, quantite in panier.items():
 
-        prix = float(item['prix'])
-        quantite = int(item['quantite'])
+        produit = get_object_or_404(
+            Produit,
+            id=int(produit_id)
+        )
 
-        item['total_produit'] = prix * quantite
+        quantite = int(quantite)
 
-        total += item['total_produit']
+        sous_total = produit.prix_vente * quantite
+
+        produits.append({
+            'produit': produit,
+            'quantite': quantite,
+            'sous_total': sous_total,
+        })
+
+        total += sous_total
 
     return render(
         request,
         'vente/panier.html',
         {
-            'panier': panier,
+            'produits': produits,
             'total': total,
         }
     )
@@ -108,6 +121,7 @@ def voir_panier(request):
 # AJOUTER AU PANIER
 # =========================================================
 
+@login_required
 def ajouter_au_panier(request, produit_id):
 
     produit = get_object_or_404(
@@ -115,78 +129,48 @@ def ajouter_au_panier(request, produit_id):
         id=produit_id
     )
 
-    # Vérifier le stock
-    if produit.stock <= 0:
-
-        messages.error(
-            request,
-            f"Désolé, {produit.designation} est en rupture de stock."
-        )
-
-        return redirect(
-            'vente:catalogue'
-        )
-
-    panier = request.session.get(
-        'panier',
-        {}
-    )
+    panier = request.session.get('panier', {})
 
     produit_id_str = str(produit_id)
 
-    # Produit déjà présent
-    if produit_id_str in panier:
+    quantite_actuelle = int(
+        panier.get(produit_id_str, 0)
+    )
 
-        if panier[produit_id_str]['quantite'] < produit.stock:
+    nouvelle_quantite = quantite_actuelle + 1
 
-            panier[produit_id_str]['quantite'] += 1
+    # Vérification du stock
+    if nouvelle_quantite > produit.stock:
 
-            messages.success(
-                request,
-                f"Quantité augmentée pour {produit.designation}."
-            )
-
-        else:
-
-            messages.warning(
-                request,
-                f"Stock maximum atteint pour {produit.designation}."
-            )
-
-    # Nouveau produit
-    else:
-
-        panier[produit_id_str] = {
-            'nom': produit.designation,
-            'prix': str(produit.prix_vente),
-            'quantite': 1
-        }
-
-        messages.success(
+        messages.error(
             request,
-            f"{produit.designation} a été ajouté au panier."
+            f"Stock insuffisant pour {produit.designation}. "
+            f"Stock disponible : {produit.stock}."
         )
+
+        return redirect('vente:catalogue')
+
+    panier[produit_id_str] = nouvelle_quantite
 
     request.session['panier'] = panier
     request.session.modified = True
 
-    # IMPORTANT :
-    # utiliser voir_panier et non panier
-    return redirect(
-        'vente:voir_panier'
+    messages.success(
+        request,
+        f"{produit.designation} a été ajouté au panier."
     )
+
+    return redirect('vente:voir_panier')
 
 
 # =========================================================
 # RETIRER DU PANIER
 # =========================================================
 
+@login_required
 def retirer_du_panier(request, produit_id):
 
-    panier = request.session.get(
-        'panier',
-        {}
-    )
+    panier = request.session.get('panier', {})
 
     produit_id_str = str(produit_id)
 
@@ -197,14 +181,30 @@ def retirer_du_panier(request, produit_id):
         request.session['panier'] = panier
         request.session.modified = True
 
-        messages.info(
+        messages.success(
             request,
-            "L'article a été retiré du panier."
+            "Le produit a été retiré du panier."
         )
 
-    return redirect(
-        'vente:voir_panier'
+    return redirect('vente:voir_panier')
+
+
+# =========================================================
+# VIDER LE PANIER
+# =========================================================
+
+@login_required
+def vider_panier(request):
+
+    request.session['panier'] = {}
+    request.session.modified = True
+
+    messages.success(
+        request,
+        "Panier vidé."
     )
+
+    return redirect('vente:voir_panier')
 
 
 # =========================================================
@@ -222,7 +222,6 @@ def inscription(request):
         adresse = request.POST.get("adresse")
         password = request.POST.get("password")
 
-        # Vérifier si l'utilisateur existe
         if User.objects.filter(
             username=email
         ).exists():
@@ -237,7 +236,6 @@ def inscription(request):
                 "vente/inscription.html"
             )
 
-        # Créer User
         user = User.objects.create_user(
             username=email,
             email=email,
@@ -246,14 +244,12 @@ def inscription(request):
             password=password
         )
 
-        # Créer Client
         Client.objects.create(
             user=user,
             telephone=telephone,
             adresse=adresse
         )
 
-        # Connexion automatique
         login(
             request,
             user
@@ -277,13 +273,8 @@ def Login_user(request):
 
     if request.method == "POST":
 
-        username = request.POST.get(
-            "username"
-        )
-
-        password = request.POST.get(
-            "password"
-        )
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
         user = authenticate(
             request,
@@ -321,19 +312,13 @@ def Login_user(request):
 @transaction.atomic
 def valider_commande(request):
 
-    client, created = Client.objects.get_or_create(
+    # Récupérer le client connecté
+    client = get_object_or_404(
+        Client,
         user=request.user
     )
 
-    panier = request.session.get('panier', {})
-
-    if not panier:
-        messages.error(
-            request,
-            "Votre panier est vide."
-        )
-        return redirect('vente:voir_panier')
-
+    # Récupérer les lieux
     lieux = LieuLivraison.objects.all()
 
     villes = (
@@ -342,70 +327,169 @@ def valider_commande(request):
         .distinct()
     )
 
-    if request.method == 'POST':
+    # Récupérer le panier
+    panier = request.session.get(
+        'panier',
+        {}
+    )
 
-        lieu_id = request.POST.get('lieu_livraison')
+    # Vérifier panier vide
+    if not panier:
 
-        if not lieu_id:
-            messages.error(
-                request,
-                "Veuillez choisir un quartier."
-            )
-
-            return render(
-                request,
-                'vente/valider_commande.html',
-                {
-                    'lieux': lieux,
-                    'villes': villes,
-                }
-            )
-
-        lieu_livraison = get_object_or_404(
-            LieuLivraison,
-            id=lieu_id
-        )
-
-        commande = Commande.objects.create(
-            client=client,
-            lieu_livraison=lieu_livraison
-        )
-
-        for item_id, item in panier.items():
-
-            produit = get_object_or_404(
-                Produit,
-                id=item_id
-            )
-
-            LigneCommande.objects.create(
-                commande=commande,
-                produit=produit,
-                quantite=item['quantite'],
-                prix_unitaire=item['prix']
-            )
-
-        request.session['panier'] = {}
-        request.session.modified = True
-
-        messages.success(
+        messages.error(
             request,
-            f"Commande N°{commande.id} créée avec succès."
+            "Votre panier est vide."
         )
 
         return redirect(
-            'vente:detail_commande',
-            commande_id=commande.id
+            'vente:voir_panier'
         )
 
-    return render(
-        request,
-        'vente/valider_commande.html',
-        {
-            'lieux': lieux,
-            'villes': villes,
-        }
+    # =====================================================
+    # AFFICHER LA PAGE
+    # =====================================================
+
+    if request.method == 'GET':
+
+        return render(
+            request,
+            'vente/valider_commande.html',
+            {
+                'lieux': lieux,
+                'villes': villes,
+            }
+        )
+
+    # =====================================================
+    # RÉCUPÉRER LE LIEU
+    # =====================================================
+
+    lieu_id = request.POST.get(
+        'lieu_livraison'
     )
+
+    if not lieu_id:
+
+        messages.error(
+            request,
+            "Veuillez choisir un lieu de livraison."
+        )
+
+        return render(
+            request,
+            'vente/valider_commande.html',
+            {
+                'lieux': lieux,
+                'villes': villes,
+            }
+        )
+
+    lieu_livraison = get_object_or_404(
+        LieuLivraison,
+        id=lieu_id
+    )
+
+    # =====================================================
+    # VÉRIFIER LE STOCK
+    # =====================================================
+
+    produits_commande = []
+
+    for produit_id, quantite in panier.items():
+
+        produit_id = int(produit_id)
+        quantite = int(quantite)
+
+        if quantite <= 0:
+            continue
+
+        produit = get_object_or_404(
+            Produit,
+            id=produit_id
+        )
+
+        if produit.stock < quantite:
+
+            messages.error(
+                request,
+                f"Stock insuffisant pour "
+                f"{produit.designation}. "
+                f"Stock disponible : {produit.stock}."
+            )
+
+            return redirect(
+                'vente:voir_panier'
+            )
+
+        produits_commande.append(
+            (produit, quantite)
+        )
+
+    # =====================================================
+    # VÉRIFIER PANIER
+    # =====================================================
+
+    if not produits_commande:
+
+        messages.error(
+            request,
+            "Votre panier est vide."
+        )
+
+        return redirect(
+            'vente:voir_panier'
+        )
+
+    # =====================================================
+    # CRÉER LA COMMANDE
+    # =====================================================
+
+    commande = Commande.objects.create(
+        client=client,
+        lieu_livraison=lieu_livraison,
+        statut='E'
+    )
+
+    # =====================================================
+    # CRÉER LES LIGNES + DIMINUER STOCK
+    # =====================================================
+
+    for produit, quantite in produits_commande:
+
+        LigneCommande.objects.create(
+            commande=commande,
+            produit=produit,
+            quantite=quantite,
+            prix_unitaire=produit.prix_vente
+        )
+
+        produit.stock -= quantite
+
+        produit.save(
+            update_fields=['stock']
+        )
+
+    # =====================================================
+    # VIDER LE PANIER
+    # =====================================================
+
+    request.session['panier'] = {}
+    request.session.modified = True
+
+    # =====================================================
+    # MESSAGE
+    # =====================================================
+
+    messages.success(
+        request,
+        f"Commande N°{commande.id} créée avec succès."
+    )
+
+    return redirect(
+        'vente:mes_commandes'
+    )
+
+
 # =========================================================
 # ANNULER UNE COMMANDE
 # =========================================================
@@ -425,7 +509,6 @@ def annuler_commande(request, commande_id):
         client=client
     )
 
-    # Déjà annulée
     if commande.statut == 'A':
 
         messages.warning(
@@ -438,7 +521,6 @@ def annuler_commande(request, commande_id):
             commande_id=commande.id
         )
 
-    # Déjà validée
     if commande.statut == 'V':
 
         messages.error(
@@ -506,4 +588,121 @@ def detail_commande(request, commande_id):
             'commande': commande
         }
     )
-  
+
+
+# =========================================================
+# MES COMMANDES
+# =========================================================
+
+@login_required
+def mes_commandes(request):
+
+    client = get_object_or_404(
+        Client,
+        user=request.user
+    )
+
+    commandes = (
+        Commande.objects
+        .filter(client=client)
+        .select_related('lieu_livraison')
+        .prefetch_related('lignes__produit')
+        .order_by('-date_commande')
+    )
+
+    commandes_data = []
+
+    for commande in commandes:
+
+        total_produits = Decimal('0.00')
+
+        for ligne in commande.lignes.all():
+
+            total_produits += (
+                ligne.prix_unitaire * ligne.quantite
+            )
+
+        frais_livraison = commande.lieu_livraison.frais
+
+        total_commande = (
+            total_produits + frais_livraison
+        )
+
+        commandes_data.append({
+            'commande': commande,
+            'total_produits': total_produits,
+            'frais_livraison': frais_livraison,
+            'total_commande': total_commande,
+        })
+
+    return render(
+        request,
+        'vente/mes_commandes.html',
+        {
+            'commandes_data': commandes_data,
+        }
+    )
+
+
+# =========================================================
+# TABLEAU DE BORD ADMIN
+# =========================================================
+
+@staff_member_required
+def dashboard(request):
+
+    nombre_produits = Produit.objects.count()
+
+    nombre_clients = Client.objects.count()
+
+    nombre_commandes = Commande.objects.count()
+
+    commandes_attente = Commande.objects.filter(
+        statut='E'
+    ).count()
+
+    commandes_validees = Commande.objects.filter(
+        statut='V'
+    ).count()
+
+    commandes_livrees = Commande.objects.filter(
+        statut='L'
+    ).count()
+
+    commandes_annulees = Commande.objects.filter(
+        statut='A'
+    ).count()
+
+    stock_total = Produit.objects.aggregate(
+        total=Sum('stock')
+    )['total'] or 0
+
+    chiffre_affaires = Decimal('0.00')
+
+    lignes = LigneCommande.objects.filter(
+        commande__statut__in=['V', 'L']
+    )
+
+    for ligne in lignes:
+
+        chiffre_affaires += (
+            ligne.quantite * ligne.prix_unitaire
+        )
+
+    context = {
+        'nombre_produits': nombre_produits,
+        'nombre_clients': nombre_clients,
+        'nombre_commandes': nombre_commandes,
+        'commandes_attente': commandes_attente,
+        'commandes_validees': commandes_validees,
+        'commandes_livrees': commandes_livrees,
+        'commandes_annulees': commandes_annulees,
+        'stock_total': stock_total,
+        'chiffre_affaires': chiffre_affaires,
+    }
+
+    return render(
+        request,
+        'vente/Tableau-bord/tableau_bord.html',
+        context
+    )

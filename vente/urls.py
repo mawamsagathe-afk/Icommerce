@@ -4,8 +4,26 @@ from . import views
 app_name = 'vente'
 
 urlpatterns = [
-    path('', views.catalogue, name='catalogue'),
 
+    # ==========================================
+    # CATALOGUE
+    # ==========================================
+
+    path(
+        'catalogue/',
+        views.catalogue,
+        name='catalogue'
+    ),
+
+    path(
+        'produit/<int:produit_id>/',
+        views.produit_detail,
+        name='produit_detail'
+    ),
+
+    # ==========================================
+    # PANIER
+    # ==========================================
 
     path(
         'panier/',
@@ -26,14 +44,25 @@ urlpatterns = [
     ),
 
     path(
+        'panier/vider/',
+        views.vider_panier,
+        name='vider_panier'
+    ),
+
+    path(
         'panier/valider/',
         views.valider_commande,
         name='valider_commande'
     ),
-     path(
-    'connexion/',
-    views.Login_user,
-    name='login_user'
+
+    # ==========================================
+    # CONNEXION / INSCRIPTION
+    # ==========================================
+
+    path(
+        'connexion/',
+        views.Login_user,
+        name='login_user'
     ),
 
     path(
@@ -42,11 +71,9 @@ urlpatterns = [
         name='inscription'
     ),
 
-    path(
-        'produit/<int:produit_id>/',
-        views.produit_detail,
-        name='produit_detail'
-    ),
+    # ==========================================
+    # COMMANDES
+    # ==========================================
 
     path(
         'commande/<int:commande_id>/',
@@ -59,15 +86,20 @@ urlpatterns = [
         views.annuler_commande,
         name='annuler_commande'
     ),
-    path(
-    'panier/valider/',
-    views.valider_commande,
-    name='valider_commande'
-),
 
-path(
-    'panier/',
-    views.voir_panier,
-    name='voir_panier'
-),
+    path(
+        'mes-commandes/',
+        views.mes_commandes,
+        name='mes_commandes'
+    ),
+
+    # ==========================================
+    # TABLEAU DE BORD ADMINISTRATEUR
+    # ==========================================
+
+    path(
+        'tableau_bord/',
+        views.dashboard,
+        name='dashboard'
+    ),
 ]

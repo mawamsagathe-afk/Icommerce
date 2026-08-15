@@ -1,0 +1,110 @@
+{% extends 'vente/base.html' %}
+{% load static %}
+
+{% block title %}
+mes commandes - Icommerce
+{% endblock %}
+
+{% block content %}
+
+{% for item in commandes_data %}
+
+    {% with commande=item.commande %}
+
+        <div class="card mb-4 shadow-sm">
+
+            <div class="card-body">
+
+                <h5>
+                    Commande N°{{ commande.id }}
+                </h5>
+
+                <p>
+                    Date :
+                    {{ commande.date_commande|date:"d/m/Y H:i" }}
+                </p>
+
+                <p>
+                    Ville :
+                    {{ commande.lieu_livraison.ville }}
+                </p>
+
+                <p>
+                    Quartier :
+                    {{ commande.lieu_livraison.quartier }}
+                </p>
+
+                <p>
+                    Frais de livraison :
+                    {{ item.frais_livraison }} FCFA
+                </p>
+
+                <p>
+                    Total :
+                    <strong>
+                        {{ item.total_commande }} FCFA
+                    </strong>
+                </p>
+
+                <p>
+                    Statut :
+                    <strong>
+                        {{ commande.get_statut_display }}
+                    </strong>
+                </p>
+
+
+                {% if commande.statut == 'E' %}
+
+                    <form
+                        method="POST"
+                        action="{% url 'vente:annuler_commande' commande.id %}"
+                        onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                        >
+                            <i class="fa-solid fa-xmark me-2"></i>
+                            Annuler la commande
+                        </button>
+
+                    </form>
+
+                {% elif commande.statut == 'A' %}
+
+                    <span class="badge bg-danger">
+                        Commande annulée
+                    </span>
+
+                {% elif commande.statut == 'V' %}
+
+                    <span class="badge bg-success">
+                        Commande validée
+                    </span>
+
+                {% elif commande.statut == 'L' %}
+
+                    <span class="badge bg-primary">
+                        Commande livrée
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endwith %}
+
+{% empty %}
+
+    <div class="alert alert-info">
+        Vous n'avez aucune commande.
+    </div>
+
+{% endfor %}
+{% endblock %}
