@@ -1,69 +1,69 @@
-
 from django.contrib import admin
 
-from vente.models import  Categorie, Client, Commande, LieuLivraison, LigneCommande, Livraison, ModePaiement, Paiement, Produit
-
-# Register your models here.
-
-    
-@admin.register(Produit)
-class ProduitAdmin(admin.ModelAdmin):
-    list_display=('categorie','designation','prix_achat','prix_vente', 'stock', 'image', 'description')
-    list_fields = ('categorie', 'Produit')
-    list_filter=('categorie',)
-
-class LigneCommandeInline(admin.TabularInline):
-    """Permet d'ajouter/modifier des produits directement depuis la fiche Commande."""
-    model = LigneCommande
-    extra = 1  # Nombre de lignes vides affichées par défaut
-    fields = ('produit', 'quantite', 'prix_unitaire')
+from .models import (
+    Client,
+    Categorie,
+    Commande,
+    LieuLivraison,
+    LigneCommande,
+    ModePaiement,
+    Paiement,
+    Produit,
+)
 
 
-# --- CONFIGURATIONS DES MODÈLES ---
-
-@admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'prenom', 'email', 'telephone')
-    search_fields = ('nom', 'prenom', 'email', 'telephone')
-    list_per_page = 20
-
-
+# -----------------------------
+# CATÉGORIE
+# -----------------------------
 @admin.register(Categorie)
 class CategorieAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'description')
+    list_display = ('id', 'nom')
     search_fields = ('nom',)
 
-# @admin.register(Produit)
-# class ProduitAdmin(admin.ModelAdmin):
-#     list_display = ('designation', 'categorie', 'prix', 'stock')
-#     list_filter = ('categorie',)
-#     search_fields = ('designation',)
-#     list_editable = ('prix', 'stock')  # Permet de modifier le prix et le stock directement depuis la liste
-#     list_per_page = 20
+
+# -----------------------------
+# PRODUIT
+# -----------------------------
+@admin.register(Produit)
+class ProduitAdmin(admin.ModelAdmin):
+    list_display = ('id','designation','categorie','stock','prix_achat','prix_vente',
+                    'image','description',)
+    list_filter = ('categorie',)
+    search_fields = ('designation',)
 
 
+# -----------------------------
+# CLIENT
+# -----------------------------
+@admin.register(Client)
+class ClientAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user','telephone', 'adresse',)    
+    search_fields = ('user__username', 'telephone', 'adresse')
+    list_per_page = 20
+    search_fields = ('user__username','user__email','telephone',)
+
+
+# -----------------------------
+# LIEU DE LIVRAISON
+# -----------------------------
 @admin.register(LieuLivraison)
 class LieuLivraisonAdmin(admin.ModelAdmin):
-    list_display = ('ville', 'quartier', 'frais')
+    list_display = ( 'id','ville','quartier','frais',)
     list_filter = ('ville',)
-    search_fields = ('ville', 'quartier')
+    search_fields = ('ville','quartier',)
+    ordering = ('ville', 'quartier')
 
 
-@admin.register(Commande)
-class CommandeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'lieu_livraison', 'date_commande', 'statut')
-    list_filter = ('statut', 'date_commande', 'lieu_livraison__ville')
-    search_fields = ('client__nom', 'client__prenom', 'id')
-    date_hierarchy = 'date_commande'  # Ajoute une navigation temporelle en haut de page
-    inlines = [LigneCommandeInline]  # Intègre la gestion des produits commandés
-
-
+# -----------------------------
+# LIGNE DE COMMANDE
+# -----------------------------
 @admin.register(LigneCommande)
 class LigneCommandeAdmin(admin.ModelAdmin):
-    list_display = ('commande', 'produit', 'quantite', 'prix_unitaire')
-    list_filter = ('produit__categorie',)
-
-
+    list_display = ('id','commande','produit','quantite','prix_unitaire',)
+    list_filter = ('produit',)
+    search_fields = ('commande__id','produit__designation',)
+    
+    
 @admin.register(ModePaiement)
 class ModePaiementAdmin(admin.ModelAdmin):
     list_display = ('nom',)
@@ -71,15 +71,48 @@ class ModePaiementAdmin(admin.ModelAdmin):
 
 @admin.register(Paiement)
 class PaiementAdmin(admin.ModelAdmin):
-    list_display = ('commande', 'mode_paiement', 'montant', 'date_paiement', 'etat')
-    list_filter = ('etat', 'mode_paiement', 'date_paiement')
-    search_fields = ('commande__id', 'commande__client__nom')
+    list_display = (
+        'id',
+        'commande',
+        'mode',
+        'montant',
+        'statut',
+        'date_paiement',
+    )
 
+    list_filter = (
+        'statut',
+        'mode',
+    )
 
-@admin.register(Livraison)
-class LivraisonAdmin(admin.ModelAdmin):
-    list_display = ('commande', 'date_livraison', 'etat')
-    list_filter = ('etat', 'date_livraison')
-    search_fields = ('commande__id',)
-    
-    
+    search_fields = (
+        'commande__id',
+    )
+
+# -----------------------------
+# COMMANDE
+# -----------------------------
+@admin.register(Commande)
+class CommandeAdmin(admin.ModelAdmin):
+    list_display = ('id','client','lieu_livraison','date_commande','statut',)
+    list_filter = ('statut','date_commande','lieu_livraison__ville')
+    search_fields = ('client__user__username','client__user__email',)
+    ordering = ('-date_commande',)
+    readonly_fields = ('date_commande',)
+    fieldsets = (
+        (
+            'Informations de la commande',
+            {
+                'fields': ('client','lieu_livraison','statut',)
+            }
+        ),
+        (
+            'Date',
+            {
+                'fields': (
+                    'date_commande',
+                )
+            }
+        ),
+    )
+

@@ -1,0 +1,122 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Commande N°{{ commande.id }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card shadow-lg border-0 rounded-4">
+
+        <div class="card-body p-4">
+
+            <h2 class="fw-bold mb-4">
+                <i class="fa-solid fa-box me-2"></i>
+                Commande N°{{ commande.id }}
+            </h2>
+
+            <hr>
+
+            <h5 class="fw-bold">
+                Informations de livraison
+            </h5>
+
+            <div class="alert alert-light">
+
+                <p>
+                    <strong>Ville :</strong>
+                    {{ commande.lieu_livraison.ville }}
+                </p>
+
+                <p>
+                    <strong>Quartier :</strong>
+                    {{ commande.lieu_livraison.quartier }}
+                </p>
+
+                <p>
+                    <strong>Frais de livraison :</strong>
+                    {{ commande.lieu_livraison.frais }} FCFA
+                </p>
+
+            </div>
+
+            <h5 class="fw-bold mt-4">
+                Produits commandés
+            </h5>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered">
+
+                    <thead class="table-dark">
+
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for ligne in commande.lignes.all %}
+
+                        <tr>
+
+                            <td>
+                                {{ ligne.produit.designation }}
+                            </td>
+
+                            <td>
+                                {{ ligne.prix_unitaire }} FCFA
+                            </td>
+
+                            <td>
+                                {{ ligne.quantite }}
+                            </td>
+
+                            <td>
+                                {{ ligne.prix_unitaire|floatformat:0 }}
+                                FCFA
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                Aucun produit.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="mt-4">
+
+                <a
+                    href="{% url 'vente:catalogue' %}"
+                    class="btn btn-secondary"
+                >
+                    Retour au catalogue
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

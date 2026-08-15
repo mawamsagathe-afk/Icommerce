@@ -123,7 +123,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
  # 4. Redirections
-LOGIN_URL = 'vente:Login_user'
+LOGIN_URL = 'vente:login_user'
 LOGIN_REDIRECT_URL = 'vente:catalogue'
 LOGOUT_REDIRECT_URL = 'vente:catalogue'
 
