@@ -1,0 +1,64 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Ajouter un produit - Icommerce
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-success text-white">
+
+            <h4 class="mb-0">
+
+                <i class="fa-solid fa-plus me-2"></i>
+
+                Ajouter un produit
+
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <div class="d-flex gap-2 mt-4">
+
+                    <button type="submit"
+                            class="btn btn-success">
+
+                        <i class="fa-solid fa-check me-2"></i>
+
+                        Ajouter le produit
+
+                    </button>
+
+
+                    <a href="{% url 'vente:dashboard' %}"
+                       class="btn btn-secondary">
+
+                        Annuler
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

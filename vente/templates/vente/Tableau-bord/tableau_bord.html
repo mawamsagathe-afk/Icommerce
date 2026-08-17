@@ -11,23 +11,38 @@ Tableau de bord - Icommerce
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
-            <h1 class="fw-bold">
-                <i class="fa-solid fa-chart-line me-2"></i>
-                Tableau de bord
-            </h1>
+        <h1 class="fw-bold">
+            <i class="fa-solid fa-chart-line me-2"></i>
+            Tableau de bord
+        </h1>
 
-            <p class="text-muted">
-                Gestion de votre boutique Icommerce
-            </p>
-        </div>
+        <p class="text-muted">
+            Gestion de votre boutique Icommerce
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <a href="{% url 'vente:ajouter_produit' %}"
+           class="btn btn-success">
+
+            <i class="fa-solid fa-plus me-2"></i>
+            Ajouter un produit
+
+        </a>
 
         <a href="{% url 'admin:index' %}"
            class="btn btn-dark">
+
             <i class="fa-solid fa-gear me-2"></i>
             Administration
+
         </a>
 
     </div>
+ 
+
+</div>
 
 
     <!-- STATISTIQUES -->
@@ -296,6 +311,309 @@ Tableau de bord - Icommerce
                 </div>
 
             </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- STATISTIQUES STOCK -->
+
+<div class="row g-4 mb-4">
+
+    <!-- VALEUR ACHAT -->
+
+    <div class="col-md-6 col-xl-4">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <p class="text-muted mb-1">
+                    Valeur du stock à l'achat
+                </p>
+
+                <h2 class="fw-bold text-primary">
+                    {{ valeur_stock_achat|floatformat:0 }} FCFA
+                </h2>
+
+                <i class="fa-solid fa-warehouse fs-1 text-primary"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- VALEUR VENTE -->
+
+    <div class="col-md-6 col-xl-4">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <p class="text-muted mb-1">
+                    Valeur totale du stock
+                </p>
+
+                <h2 class="fw-bold text-success">
+                    {{ valeur_stock_vente|floatformat:0 }} FCFA
+                </h2>
+
+                <i class="fa-solid fa-coins fs-1 text-success"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BENEFICE -->
+
+    <div class="col-md-6 col-xl-4">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <p class="text-muted mb-1">
+                    Bénéfice potentiel du stock
+                </p>
+
+                <h2 class="fw-bold text-warning">
+                    {{ benefice_stock_total|floatformat:0 }} FCFA
+                </h2>
+
+                <i class="fa-solid fa-chart-line fs-1 text-warning"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ===================================================== -->
+<!-- GESTION DES PRODUITS -->
+<!-- ===================================================== -->
+
+<div class="card shadow-sm border-0 mt-4">
+
+    <div class="card-header bg-dark text-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+
+                <i class="fa-solid fa-boxes-stacked me-2"></i>
+
+                Gestion des produits
+
+            </h5>
+
+            <a href="{% url 'vente:ajouter_produit' %}"
+               class="btn btn-success btn-sm">
+
+                <i class="fa-solid fa-plus me-1"></i>
+                Ajouter
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Produit</th>
+
+                        <th>Prix achat</th>
+
+                        <th>Prix vente</th>
+
+                        <th>Stock</th>
+
+                        <th>Bénéfice unitaire</th>
+
+                        <th>Valeur stock</th>
+
+                        <th>Bénéfice potentiel</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in produits_data %}
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+                                {{ item.produit.designation }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.produit.prix_achat|floatformat:0 }}
+                            FCFA
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.produit.prix_vente|floatformat:0 }}
+                            FCFA
+
+                        </td>
+
+
+                        <td>
+
+                            {% if item.produit.stock > 0 %}
+
+                                <span class="badge bg-success">
+
+                                    {{ item.produit.stock }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    Rupture
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if item.benefice_unitaire > 0 %}
+
+                                <span class="text-success fw-bold">
+
+                                    +{{ item.benefice_unitaire|floatformat:0 }}
+                                    FCFA
+
+                                </span>
+
+                            {% elif item.benefice_unitaire < 0 %}
+
+                                <span class="text-danger fw-bold">
+
+                                    {{ item.benefice_unitaire|floatformat:0 }}
+                                    FCFA
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    0 FCFA
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ item.valeur_vente|floatformat:0 }}
+                            FCFA
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="text-success fw-bold">
+
+                                {{ item.benefice_total|floatformat:0 }}
+                                FCFA
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="d-flex gap-1">
+
+                                <a href="{% url 'vente:modifier_produit' item.produit.id %}"
+                                   class="btn btn-sm btn-warning">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+
+                                <a href="{% url 'vente:supprimer_produit' item.produit.id %}"
+                                   class="btn btn-sm btn-danger">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="8"
+                            class="text-center py-5">
+
+                            <i class="fa-solid fa-box-open fs-1 text-muted"></i>
+
+                            <p class="text-muted mt-3">
+
+                                Aucun produit disponible.
+
+                            </p>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
 
         </div>
 

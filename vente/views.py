@@ -17,6 +17,7 @@ from .models import (
     Commande,
     LigneCommande,
 )
+from .forms import ProduitForm
 
 
 # =========================================================
@@ -693,6 +694,10 @@ def mes_commandes(request):
 # TABLEAU DE BORD ADMIN
 # =========================================================
 
+# =========================================================
+# TABLEAU DE BORD
+# =========================================================
+
 @staff_member_required
 def dashboard(request):
 
@@ -718,9 +723,59 @@ def dashboard(request):
         statut='A'
     ).count()
 
+    # =====================================================
+    # STOCK TOTAL
+    # =====================================================
+
     stock_total = Produit.objects.aggregate(
         total=Sum('stock')
     )['total'] or 0
+
+    # =====================================================
+    # VALEUR TOTALE DU STOCK
+    # =====================================================
+
+    valeur_stock_achat = Decimal('0.00')
+    valeur_stock_vente = Decimal('0.00')
+    benefice_stock_total = Decimal('0.00')
+
+    produits = Produit.objects.all().order_by('designation')
+
+    produits_data = []
+
+    for produit in produits:
+
+        prix_achat = produit.prix_achat or Decimal('0.00')
+        prix_vente = produit.prix_vente or Decimal('0.00')
+        stock = produit.stock or 0
+
+        # Bénéfice sur une unité
+        benefice_unitaire = prix_vente - prix_achat
+
+        # Valeur du stock au prix d'achat
+        valeur_achat = prix_achat * stock
+
+        # Valeur du stock au prix de vente
+        valeur_vente = prix_vente * stock
+
+        # Bénéfice potentiel du stock
+        benefice_total = benefice_unitaire * stock
+
+        valeur_stock_achat += valeur_achat
+        valeur_stock_vente += valeur_vente
+        benefice_stock_total += benefice_total
+
+        produits_data.append({
+            'produit': produit,
+            'benefice_unitaire': benefice_unitaire,
+            'valeur_achat': valeur_achat,
+            'valeur_vente': valeur_vente,
+            'benefice_total': benefice_total,
+        })
+
+    # =====================================================
+    # CHIFFRE D'AFFAIRES
+    # =====================================================
 
     chiffre_affaires = Decimal('0.00')
 
@@ -734,20 +789,166 @@ def dashboard(request):
             ligne.quantite * ligne.prix_unitaire
         )
 
+    # =====================================================
+    # CONTEXT
+    # =====================================================
+
     context = {
+
         'nombre_produits': nombre_produits,
+
         'nombre_clients': nombre_clients,
+
         'nombre_commandes': nombre_commandes,
+
         'commandes_attente': commandes_attente,
+
         'commandes_validees': commandes_validees,
+
         'commandes_livrees': commandes_livrees,
+
         'commandes_annulees': commandes_annulees,
+
         'stock_total': stock_total,
+
         'chiffre_affaires': chiffre_affaires,
+
+        # Nouvelles statistiques
+        'valeur_stock_achat': valeur_stock_achat,
+
+        'valeur_stock_vente': valeur_stock_vente,
+
+        'benefice_stock_total': benefice_stock_total,
+
+        'produits_data': produits_data,
     }
 
     return render(
         request,
         'vente/Tableau-bord/tableau_bord.html',
         context
+    )  
+    # =========================================================
+# SUPPRIMER UN PRODUIT
+# =========================================================
+
+@staff_member_required
+def supprimer_produit(request, produit_id):
+
+    produit = get_object_or_404(
+        Produit,
+        id=produit_id
+    )
+
+    if request.method == 'POST':
+
+        designation = produit.designation
+
+        produit.delete()
+
+        messages.success(
+            request,
+            f"Le produit « {designation} » "
+            f"a été supprimé."
+        )
+
+        return redirect(
+            'vente:dashboard'
+        )
+
+    return render(
+        request,
+        'vente/Tableau-bord/supprimer_produit.html',
+        {
+            'produit': produit
+        }
+    )
+    
+    # =========================================================
+# MODIFIER UN PRODUIT
+# =========================================================
+
+@staff_member_required
+def modifier_produit(request, produit_id):
+
+    produit = get_object_or_404(
+        Produit,
+        id=produit_id
+    )
+
+    if request.method == 'POST':
+
+        form = ProduitForm(
+            request.POST,
+            request.FILES,
+            instance=produit
+        )
+
+        if form.is_valid():
+
+            produit = form.save()
+
+            messages.success(
+                request,
+                f"Le produit « {produit.designation} » "
+                f"a été modifié avec succès."
+            )
+
+            return redirect(
+                'vente:dashboard'
+            )
+
+    else:
+
+        form = ProduitForm(
+            instance=produit
+        )
+
+    return render(
+        request,
+        'vente/Tableau-bord/modifier_produit.html',
+        {
+            'form': form,
+            'produit': produit,
+        }
+    )
+    
+    # =========================================================
+# AJOUTER UN PRODUIT
+# =========================================================
+
+@staff_member_required
+def ajouter_produit(request):
+
+    if request.method == 'POST':
+
+        form = ProduitForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            produit = form.save()
+
+            messages.success(
+                request,
+                f"Le produit « {produit.designation} » "
+                f"a été ajouté avec succès."
+            )
+
+            return redirect(
+                'vente:dashboard'
+            )
+
+    else:
+
+        form = ProduitForm()
+
+    return render(
+        request,
+        'vente/Tableau-bord/ajouter_produit.html',
+        {
+            'form': form
+        }
     )

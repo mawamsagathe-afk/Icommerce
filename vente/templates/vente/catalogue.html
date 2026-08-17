@@ -8,11 +8,36 @@
 
     <!-- HERO HEADER -->
     <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-white shadow-sm border">
+
+    <div class="d-flex justify-content-between align-items-start">
+
         <div class="col-lg-8 px-0">
-            <h1 class="display-5 fw-bold text-dark">Nos Produits</h1>
-            <p class="lead my-3 text-secondary">Trouvez les meilleurs articles disponibles dans notre boutique.</p>
+
+            <h1 class="display-5 fw-bold text-dark">
+                Nos Produits
+            </h1>
+
+            <p class="lead my-3 text-secondary">
+                Trouvez les meilleurs articles disponibles dans notre boutique.
+            </p>
+
         </div>
+
+       {% if user.is_authenticated and user.is_superuser %}
+    <div>
+        <a href="{% url 'vente:dashboard' %}"
+           class="btn btn-dark">
+
+            <i class="fa-solid fa-chart-line me-2"></i>
+            Tableau de bord
+
+        </a>
     </div>
+{% endif %}
+
+    </div>
+
+</div>
 
     <!-- BARRE DE RECHERCHE ET FILTRE CATEGORIE -->
     <div class="card shadow-sm mb-4 border-0">

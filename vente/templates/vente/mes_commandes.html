@@ -2,124 +2,320 @@
 {% load static %}
 
 {% block title %}
-mes commandes - Icommerce
+Mes commandes - Icommerce
 {% endblock %}
 
 {% block content %}
 
-{% for item in commandes_data %}
+<div class="container py-5">
 
-    {% with commande=item.commande %}
+    <!-- TITRE -->
+    <div class="text-center mb-5">
 
-        <div class="card mb-4 shadow-sm">
+        <h1 class="fw-bold">
+            <i class="fa-solid fa-cart-shopping me-2"></i>
+            Mes commandes
+        </h1>
 
-            <div class="card-body">
+        {% if commandes_data %}
+            {% with commande=commandes_data.0.commande %}
 
-                <h5>
-                    Commande N°{{ commande.id }}
-                </h5>
-
-                <p>
-                    Date :
-                    {{ commande.date_commande|date:"d/m/Y H:i" }}
-                </p>
-
-                <p>
-                    Ville :
-                    {{ commande.lieu_livraison.ville }}
-                </p>
-
-                <p>
-                    Quartier :
-                    {{ commande.lieu_livraison.quartier }}
-                </p>
-
-                <p>
-                    Frais de livraison :
-                    {{ item.frais_livraison }} FCFA
-                </p>
-
-                <p>
-                    Total :
+                <p class="text-muted mt-2">
+                    Client :
                     <strong>
-                        {{ item.total_commande }} FCFA
+                        {{ commande.client.user.get_full_name|default:commande.client.user.username }}
                     </strong>
                 </p>
 
-                <p>
-                    Statut :
-                    <strong>
-                        {{ commande.get_statut_display }}
-                    </strong>
-                </p>
+            {% endwith %}
+        {% endif %}
 
+        <!-- RETOUR CATALOGUE -->
+        <a href="{% url 'vente:catalogue' %}"
+           class="btn btn-warning text-dark fw-bold mt-3">
 
-                {% if commande.statut == 'E' %}
+            <i class="fa-solid fa-arrow-left me-2"></i>
+            Retour au catalogue
 
-    <div class="d-flex gap-2">
-
-        <!-- VALIDER -->
-        <form
-            method="POST"
-           action="{% url 'vente:confirmer_commande' commande.id %}"
-        >
-            {% csrf_token %}
-
-            <button
-                type="submit"
-                class="btn btn-success"
-                onclick="return confirm('Voulez-vous valider cette commande ?');"
-            >
-                <i class="fa-solid fa-check me-2"></i>
-                Valider la commande
-            </button>
-
-        </form>
-
-
-        <!-- ANNULER -->
-        <form
-            method="POST"
-            action="{% url 'vente:annuler_commande' commande.id %}"
-            onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');"
-        >
-
-            {% csrf_token %}
-
-            <button
-                type="submit"
-                class="btn btn-danger"
-            >
-                <i class="fa-solid fa-xmark me-2"></i>
-                Annuler la commande
-            </button>
-
-        </form>
+        </a>
 
     </div>
 
-{% elif commande.statut == 'A' %}
 
-    <span class="badge bg-danger">
-        <i class="fa-solid fa-xmark me-1"></i>
-        Commande annulée
-    </span>
+    <!-- COMMANDES -->
 
-{% elif commande.statut == 'V' %}
+    <div class="row justify-content-center">
 
-    <span class="badge bg-success">
-        <i class="fa-solid fa-check me-1"></i>
-        Commande validée
-    </span>
+        <div class="col-12 col-lg-8">
 
-{% elif commande.statut == 'L' %}
+            {% for item in commandes_data %}
 
-    <span class="badge bg-primary">
-        <i class="fa-solid fa-truck me-1"></i>
-        Commande livrée
-    </span>
+                {% with commande=item.commande %}
 
-{% endif %}
- {% endwith %}
-{% endfor %}
+                    <div class="card mb-4 shadow border-0 rounded-4">
+
+                        <div class="card-body p-4">
+
+                            <!-- NUMERO COMMANDE -->
+
+                            <div class="text-center mb-4">
+
+                                <h4 class="fw-bold">
+
+                                    <i class="fa-solid fa-receipt me-2"></i>
+
+                                    Commande N°{{ commande.id }}
+
+                                </h4>
+
+                                <p class="text-muted mb-0">
+
+                                    {{ commande.date_commande|date:"d/m/Y H:i" }}
+
+                                </p>
+
+                            </div>
+
+
+                            <!-- INFORMATIONS CLIENT -->
+
+                            <div class="bg-light rounded-3 p-3 mb-3">
+
+                                <h6 class="fw-bold mb-3">
+
+                                    <i class="fa-solid fa-user me-2"></i>
+                                    Informations du client
+
+                                </h6>
+
+                                <p class="mb-1">
+
+                                    <strong>Nom :</strong>
+
+                                    {{ commande.client.user.get_full_name|default:commande.client.user.username }}
+
+                                </p>
+
+                                <p class="mb-0">
+
+                                    <strong>Utilisateur :</strong>
+
+                                    {{ commande.client.user.username }}
+
+                                </p>
+
+                            </div>
+
+
+                            <!-- LIVRAISON -->
+
+                            <div class="bg-light rounded-3 p-3 mb-3">
+
+                                <h6 class="fw-bold mb-3">
+
+                                    <i class="fa-solid fa-truck me-2"></i>
+                                    Livraison
+
+                                </h6>
+
+                                <p class="mb-1">
+
+                                    <strong>Ville :</strong>
+
+                                    {{ commande.lieu_livraison.ville }}
+
+                                </p>
+
+                                <p class="mb-1">
+
+                                    <strong>Quartier :</strong>
+
+                                    {{ commande.lieu_livraison.quartier }}
+
+                                </p>
+
+                                <p class="mb-0">
+
+                                    <strong>Frais de livraison :</strong>
+
+                                    {{ item.frais_livraison }} FCFA
+
+                                </p>
+
+                            </div>
+
+
+                            <!-- TOTAL -->
+
+                            <div class="text-center border-top border-bottom py-3 mb-4">
+
+                                <span class="text-muted">
+                                    Total de la commande
+                                </span>
+
+                                <h3 class="fw-bold text-success mt-1">
+
+                                    {{ item.total_commande }} FCFA
+
+                                </h3>
+
+                            </div>
+
+
+                            <!-- STATUT -->
+
+                            <div class="text-center mb-4">
+
+                                <span class="text-muted d-block mb-2">
+                                    Statut de la commande
+                                </span>
+
+
+                                {% if commande.statut == 'E' %}
+
+                                    <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+
+                                        <i class="fa-solid fa-clock me-1"></i>
+
+                                        En attente
+
+                                    </span>
+
+
+                                {% elif commande.statut == 'A' %}
+
+                                    <span class="badge bg-danger fs-6 px-3 py-2">
+
+                                        <i class="fa-solid fa-xmark me-1"></i>
+
+                                        Commande annulée
+
+                                    </span>
+
+
+                                {% elif commande.statut == 'V' %}
+
+                                    <span class="badge bg-success fs-6 px-3 py-2">
+
+                                        <i class="fa-solid fa-check me-1"></i>
+
+                                        Commande validée
+
+                                    </span>
+
+
+                                {% elif commande.statut == 'L' %}
+
+                                    <span class="badge bg-primary fs-6 px-3 py-2">
+
+                                        <i class="fa-solid fa-truck me-1"></i>
+
+                                        Commande livrée
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- ACTIONS -->
+
+                            {% if commande.statut == 'E' %}
+
+                                <div class="d-flex justify-content-center gap-3 flex-wrap">
+
+
+                                    <!-- VALIDER -->
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'vente:confirmer_commande' commande.id %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success px-4"
+                                            onclick="return confirm('Voulez-vous valider cette commande ?');"
+                                        >
+
+                                            <i class="fa-solid fa-check me-2"></i>
+
+                                            Valider la commande
+
+                                        </button>
+
+                                    </form>
+
+
+                                    <!-- ANNULER -->
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'vente:annuler_commande' commande.id %}"
+                                        onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger px-4"
+                                        >
+
+                                            <i class="fa-solid fa-xmark me-2"></i>
+
+                                            Annuler la commande
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endwith %}
+
+            {% empty %}
+
+                <!-- AUCUNE COMMANDE -->
+
+                <div class="text-center py-5">
+
+                    <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-3"></i>
+
+                    <h4 class="fw-bold">
+                        Aucune commande
+                    </h4>
+
+                    <p class="text-muted">
+                        Vous n'avez encore passé aucune commande.
+                    </p>
+
+                    <a href="{% url 'vente:catalogue' %}"
+                       class="btn btn-warning fw-bold">
+
+                        <i class="fa-solid fa-store me-2"></i>
+
+                        Voir le catalogue
+
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

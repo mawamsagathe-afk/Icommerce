@@ -120,4 +120,28 @@ urlpatterns = [
         views.dashboard,
         name='dashboard'
     ),
+    
+    path(
+    'tableau-de-bord/',
+    views.dashboard,
+    name='dashboard'
+),
+
+path(
+    'tableau-de-bord/produit/ajouter/',
+    views.ajouter_produit,
+    name='ajouter_produit'
+),
+
+path(
+    'tableau-de-bord/produit/<int:produit_id>/modifier/',
+    views.modifier_produit,
+    name='modifier_produit'
+),
+
+path(
+    'tableau-de-bord/produit/<int:produit_id>/supprimer/',
+    views.supprimer_produit,
+    name='supprimer_produit'
+),
 ]
