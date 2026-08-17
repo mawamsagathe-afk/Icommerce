@@ -56,55 +56,70 @@ mes commandes - Icommerce
 
                 {% if commande.statut == 'E' %}
 
-                    <form
-                        method="POST"
-                        action="{% url 'vente:annuler_commande' commande.id %}"
-                        onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');"
-                    >
+    <div class="d-flex gap-2">
 
-                        {% csrf_token %}
+        <!-- VALIDER -->
+        <form
+            method="POST"
+           action="{% url 'vente:confirmer_commande' commande.id %}"
+        >
+            {% csrf_token %}
 
-                        <button
-                            type="submit"
-                            class="btn btn-danger"
-                        >
-                            <i class="fa-solid fa-xmark me-2"></i>
-                            Annuler la commande
-                        </button>
+            <button
+                type="submit"
+                class="btn btn-success"
+                onclick="return confirm('Voulez-vous valider cette commande ?');"
+            >
+                <i class="fa-solid fa-check me-2"></i>
+                Valider la commande
+            </button>
 
-                    </form>
+        </form>
 
-                {% elif commande.statut == 'A' %}
 
-                    <span class="badge bg-danger">
-                        Commande annulée
-                    </span>
+        <!-- ANNULER -->
+        <form
+            method="POST"
+            action="{% url 'vente:annuler_commande' commande.id %}"
+            onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');"
+        >
 
-                {% elif commande.statut == 'V' %}
+            {% csrf_token %}
 
-                    <span class="badge bg-success">
-                        Commande validée
-                    </span>
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                <i class="fa-solid fa-xmark me-2"></i>
+                Annuler la commande
+            </button>
 
-                {% elif commande.statut == 'L' %}
+        </form>
 
-                    <span class="badge bg-primary">
-                        Commande livrée
-                    </span>
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
-    {% endwith %}
-
-{% empty %}
-
-    <div class="alert alert-info">
-        Vous n'avez aucune commande.
     </div>
 
+{% elif commande.statut == 'A' %}
+
+    <span class="badge bg-danger">
+        <i class="fa-solid fa-xmark me-1"></i>
+        Commande annulée
+    </span>
+
+{% elif commande.statut == 'V' %}
+
+    <span class="badge bg-success">
+        <i class="fa-solid fa-check me-1"></i>
+        Commande validée
+    </span>
+
+{% elif commande.statut == 'L' %}
+
+    <span class="badge bg-primary">
+        <i class="fa-solid fa-truck me-1"></i>
+        Commande livrée
+    </span>
+
+{% endif %}
+ {% endwith %}
 {% endfor %}
 {% endblock %}

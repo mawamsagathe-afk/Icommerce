@@ -6,6 +6,16 @@ app_name = 'vente'
 urlpatterns = [
 
     # ==========================================
+    # ACCUEIL
+    # ==========================================
+
+    path(
+        '',
+        views.catalogue,
+        name='accueil'
+    ),
+
+    # ==========================================
     # CATALOGUE
     # ==========================================
 
@@ -49,6 +59,7 @@ urlpatterns = [
         name='vider_panier'
     ),
 
+    # Création de la commande depuis le panier
     path(
         'panier/valider/',
         views.valider_commande,
@@ -56,7 +67,7 @@ urlpatterns = [
     ),
 
     # ==========================================
-    # CONNEXION / INSCRIPTION
+    # CONNEXION
     # ==========================================
 
     path(
@@ -87,6 +98,13 @@ urlpatterns = [
         name='annuler_commande'
     ),
 
+    # ⭐ NOUVELLE URL POUR VALIDER UNE COMMANDE
+    path(
+        'commande/<int:commande_id>/valider/',
+        views.confirmer_commande,
+        name='confirmer_commande'
+    ),
+
     path(
         'mes-commandes/',
         views.mes_commandes,
@@ -94,7 +112,7 @@ urlpatterns = [
     ),
 
     # ==========================================
-    # TABLEAU DE BORD ADMINISTRATEUR
+    # TABLEAU DE BORD
     # ==========================================
 
     path(

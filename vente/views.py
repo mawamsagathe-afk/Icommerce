@@ -454,20 +454,16 @@ def valider_commande(request):
     # CRÉER LES LIGNES + DIMINUER STOCK
     # =====================================================
 
+   
     for produit, quantite in produits_commande:
 
-        LigneCommande.objects.create(
-            commande=commande,
-            produit=produit,
-            quantite=quantite,
-            prix_unitaire=produit.prix_vente
+         LigneCommande.objects.create(
+        commande=commande,
+        produit=produit,
+        quantite=quantite,
+        prix_unitaire=produit.prix_vente
         )
 
-        produit.stock -= quantite
-
-        produit.save(
-            update_fields=['stock']
-        )
 
     # =====================================================
     # VIDER LE PANIER
@@ -493,6 +489,55 @@ def valider_commande(request):
 # =========================================================
 # ANNULER UNE COMMANDE
 # =========================================================
+
+@login_required
+@transaction.atomic
+def confirmer_commande(request, commande_id):
+    client = get_object_or_404(
+        Client,
+        user=request.user
+    )
+
+    commande = get_object_or_404(
+        Commande,
+        id=commande_id,
+        client=client
+    )
+
+    if request.method == 'POST':
+        lignes = commande.lignes.select_related('produit')
+
+        if not lignes.exists():
+            messages.error(
+                request,
+                "Cette commande ne contient aucun produit."
+            )
+            return redirect('vente:mes_commandes')
+
+        for ligne in lignes:
+            produit = ligne.produit
+
+            if produit.stock < ligne.quantite:
+                messages.error(
+                    request,
+                    f"Stock insuffisant pour {produit.designation}."
+                )
+                return redirect('vente:mes_commandes')
+
+            produit.stock -= ligne.quantite
+            produit.save(update_fields=['stock'])
+
+        commande.statut = 'V'
+        commande.save(update_fields=['statut'])
+
+        messages.success(
+            request,
+            f"La commande N°{commande.id} a été validée avec succès."
+        )
+
+        return redirect('vente:mes_commandes')
+
+    return redirect('vente:mes_commandes')
 
 @login_required
 @transaction.atomic
