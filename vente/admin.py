@@ -37,10 +37,21 @@ class ProduitAdmin(admin.ModelAdmin):
 # -----------------------------
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user','telephone', 'adresse',)    
-    search_fields = ('user__username', 'telephone', 'adresse')
+    list_display = (
+        'id',
+        'user',
+        'nom',
+        'telephone',
+    )
+
+    search_fields = (
+        'nom',
+        'telephone',
+        'user__username',
+        'user__email',
+    )
+
     list_per_page = 20
-    search_fields = ('user__username','user__email','telephone',)
 
 
 # -----------------------------

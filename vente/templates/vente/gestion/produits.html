@@ -1,0 +1,250 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Gestion des produits
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- EN-TÊTE -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold">
+                Gestion des produits
+            </h2>
+
+            <p class="text-muted mb-0">
+                Ajouter, modifier et supprimer les produits.
+            </p>
+        </div>
+
+        <a href="{% url 'vente:tableau_bord_admin' %}"
+           class="btn btn-secondary">
+            ← Retour au tableau de bord
+        </a>
+
+    </div>
+
+
+    <!-- BOUTON AJOUTER -->
+
+    <div class="mb-4">
+
+        <a href="{% url 'vente:ajouter_produit' %}"
+           class="btn btn-success">
+            + Ajouter un produit
+        </a>
+
+    </div>
+
+
+    <!-- LISTE DES PRODUITS -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            {% if produits %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Image</th>
+
+                            <th>Désignation</th>
+
+                            <th>Catégorie</th>
+
+                            <th>Prix achat</th>
+
+                            <th>Prix vente</th>
+
+                            <th>Stock</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for produit in produits %}
+
+                        <tr>
+
+                            <!-- ID -->
+
+                            <td>
+                                {{ produit.id }}
+                            </td>
+
+
+                            <!-- IMAGE -->
+
+                            <td>
+
+                                {% if produit.image %}
+
+                                    <img src="{{ produit.image.url }}"
+                                         alt="{{ produit.designation }}"
+                                         width="60"
+                                         height="60"
+                                         class="rounded"
+                                         style="object-fit: cover;">
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        Pas d'image
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- DESIGNATION -->
+
+                            <td>
+
+                                <strong>
+                                    {{ produit.designation }}
+                                </strong>
+
+                                {% if produit.description %}
+
+                                    <br>
+
+                                    <small class="text-muted">
+                                        {{ produit.description|truncatechars:50 }}
+                                    </small>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- CATEGORIE -->
+
+                            <td>
+
+                                {% if produit.categorie %}
+
+                                    {{ produit.categorie }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        Aucune
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- PRIX ACHAT -->
+
+                            <td>
+
+                                {{ produit.prix_achat }} FCFA
+
+                            </td>
+
+
+                            <!-- PRIX VENTE -->
+
+                            <td>
+
+                                <strong>
+                                    {{ produit.prix_vente }} FCFA
+                                </strong>
+
+                            </td>
+
+
+                            <!-- STOCK -->
+
+                            <td>
+
+                                {% if produit.stock > 0 %}
+
+                                    <span class="badge bg-success">
+                                        {{ produit.stock }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Rupture
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <div class="d-flex gap-2">
+
+                                    <a href="{% url 'vente:modifier_produit' produit.id %}"
+                                       class="btn btn-sm btn-warning">
+
+                                        Modifier
+
+                                    </a>
+
+
+                                    <a href="{% url 'vente:supprimer_produit' produit.id %}"
+                                       class="btn btn-sm btn-danger">
+
+                                        Supprimer
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+                <div class="alert alert-info text-center">
+
+                    Aucun produit enregistré.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

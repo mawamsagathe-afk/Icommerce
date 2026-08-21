@@ -40,30 +40,27 @@ class Produit(models.Model):
     def __str__(self):
         return self.designation
 
+from django.db import models
+from django.contrib.auth.models import User
+
 
 class Client(models.Model):
     user = models.OneToOneField(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='client'
     )
-
-    telephone = models.CharField(
-        max_length=20
-    )
-
-    adresse = models.CharField(
-        max_length=255
-    )
+    nom = models.CharField(max_length=100)
+    telephone = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
-        return self.user.username
+        return self.nom
 
 
 class LieuLivraison(models.Model):
     ville = models.CharField(max_length=100)
-
     quartier = models.CharField(max_length=100)
-
+    adresse = models.CharField(max_length=255,blank=True)
     frais = models.DecimalField(
         max_digits=8,
         decimal_places=2
@@ -165,3 +162,38 @@ class Paiement(models.Model):
 
     def __str__(self):
         return f"Paiement commande N°{self.commande.id}"
+    
+class Notification(models.Model):
+    TYPE_CHOICES = [
+        ("commande", "Commande"),
+        ("client", "Client"),
+        ("autre", "Autre"),
+    ]
+
+    titre = models.CharField(max_length=255)
+    message = models.TextField()
+
+    type_notification = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        default="commande"
+    )
+
+    commande = models.ForeignKey(
+        "Commande",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="notifications"
+    )
+
+    lu = models.BooleanField(default=False)
+
+    date_creation = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.titre
+
+    class Meta:
+        ordering = ["-date_creation"]
+    

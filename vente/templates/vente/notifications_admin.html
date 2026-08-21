@@ -1,0 +1,97 @@
+{% extends "vente/base.html" %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="fw-bold">
+            Notifications
+        </h2>
+   
+        <span class="badge bg-primary">
+            {{ notifications|length }} notification{{ notifications|length|pluralize }}
+        </span>
+
+              <a href="/tableaud-de-bord/admin/"
+   class="btn btn-secondary">
+    ← Retour au tableau de bord
+</a>
+
+    </div>
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+            <div class="card shadow-sm mb-3
+                {% if not notification.lu %}
+                    border-primary
+                {% endif %}
+            ">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <h5 class="fw-bold">
+                            {{ notification.titre }}
+                        </h5>
+
+                        {% if not notification.lu %}
+                            <span class="badge bg-danger">
+                                Nouveau
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                Lu
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    <p class="mb-2">
+                        {{ notification.message }}
+                    </p>
+
+                    <small class="text-muted">
+                        {{ notification.date_creation|date:"d/m/Y à H:i" }}
+                    </small>
+
+                    {% if notification.commande %}
+
+                        <div class="mt-3">
+
+                            <a href="{% url 'vente:gestion_commandes' %}"
+                               class="btn btn-sm btn-outline-primary">
+
+                                Voir les commandes
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="alert alert-info">
+            Aucune notification pour le moment.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

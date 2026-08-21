@@ -1,0 +1,62 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Supprimer une catégorie - Icommerce
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        Supprimer une catégorie
+                    </h4>
+                </div>
+
+                <div class="card-body text-center">
+
+                    <p class="fs-5">
+                        Voulez-vous vraiment supprimer la catégorie :
+                    </p>
+
+                    <h3 class="fw-bold mb-4">
+                        "{{ categorie.nom }}"
+                    </h3>
+
+                    <div class="alert alert-warning">
+                        ⚠️ Cette action est irréversible.
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <a href="{% url 'vente:gestion_categories' %}"
+                           class="btn btn-secondary">
+                            Annuler
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-danger">
+                            Oui, supprimer
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

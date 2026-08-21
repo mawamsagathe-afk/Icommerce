@@ -122,10 +122,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
- # 4. Redirections
-LOGIN_URL = 'vente:login_user'
-LOGIN_REDIRECT_URL = 'vente:catalogue'
-LOGOUT_REDIRECT_URL = 'vente:catalogue'
+# =========================
+# CONFIGURATION EMAIL
+# =========================
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEFAULT_FROM_EMAIL = 'noreply@icommerce.local'
 
 
 

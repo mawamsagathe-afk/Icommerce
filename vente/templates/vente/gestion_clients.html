@@ -1,0 +1,128 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Gestion des clients
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="fw-bold">
+        Gestion des clients
+    </h2>
+
+    <div class="d-flex gap-2">
+        
+        <a href="{% url 'vente:ajouter_client' %}"
+           class="btn btn-success">
+            <i class="bi bi-person-plus"></i>
+            Ajouter un client
+        </a>
+        <form method="POST"
+      action="{% url 'vente:reinitialiser_clients' %}"
+      onsubmit="return confirm('Voulez-vous vraiment supprimer TOUS les clients ? Cette action est irréversible.');">
+
+    {% csrf_token %}
+
+    <button type="submit" class="btn btn-danger">
+        <i class="bi bi-trash"></i>
+        Réinitialiser les clients
+    </button>
+
+</form>
+
+        <a href="{% url 'vente:tableau_bord_admin' %}"
+           class="btn btn-secondary">
+            Retour au tableau de bord
+        </a>
+
+    </div>
+
+</div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            {% if clients %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Actions</th>
+                         </tr>
+                      </thead>
+
+                      <tbody>
+
+    {% for client in clients %}
+
+        <tr>
+
+            <td>
+                {{ client.id }}
+            </td>
+
+            <td>
+                {{ client.nom }}
+            </td>
+
+            <td>
+                {{ client.user.email }}
+            </td>
+
+            <td>
+                {{ client.telephone|default:"Non renseigné" }}
+            </td>
+
+            <td>
+
+               <form method="POST"
+      action="{% url 'vente:supprimer_client' client.id %}"
+      class="d-inline"
+      onsubmit="return confirm('Voulez-vous vraiment supprimer ce client et son compte ?');">
+
+    {% csrf_token %}
+
+    <button type="submit" class="btn btn-sm btn-danger">
+        <i class="fa-solid fa-trash"></i>
+        Supprimer
+    </button>
+
+</form>
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+</tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+                    Aucun client enregistré.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

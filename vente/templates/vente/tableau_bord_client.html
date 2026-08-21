@@ -1,0 +1,91 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Tableau de bord client
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">
+                Tableau de bord
+            </h2>
+
+            <p class="text-muted">
+                Bienvenue {{ request.user.username }}
+            </p>
+        </div>
+
+        <a href="{% url 'vente:catalogue' %}"
+           class="btn btn-success">
+            Voir le catalogue
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        🛍️ Catalogue
+                    </h5>
+
+                    <p class="text-muted">
+                        Consultez les produits disponibles.
+                    </p>
+
+                    <a href="{% url 'vente:catalogue' %}"
+                       class="btn btn-success">
+                        Voir les produits
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        🛒 Mon panier
+                    </h5>
+
+                    <p class="text-muted">
+                        Consultez les produits ajoutés à votre panier.
+                    </p>
+
+                   <a href="{% url 'vente:voir_panier' %}"
+                       class="btn btn-primary">
+                               Voir mon panier
+                   </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        📦 Mes commandes
+                    </h5>
+
+                    <p class="text-muted">
+                        Consultez l'historique de vos commandes.
+                    </p>
+
+                    <a href="{% url 'vente:mes_commandes' %}"
+                       class="btn btn-dark">
+                        Mes commandes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

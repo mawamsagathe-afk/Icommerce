@@ -1,0 +1,148 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Gestion des catégories - Icommerce
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- EN-TÊTE -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold">
+                Gestion des catégories
+            </h1>
+
+            <p class="text-muted mb-0">
+                Gérez les catégories de vos produits.
+            </p>
+        </div>
+
+       <a href="/tableaud-de-bord/admin/"
+   class="btn btn-secondary">
+    ← Retour au tableau de bord
+</a>
+
+    </div>
+
+
+    <!-- LISTE DES CATÉGORIES -->
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                Liste des catégories
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            {% if categories %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for categorie in categories %}
+
+                            <tr>
+
+                                <td>
+                                    {{ categorie.id }}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        {{ categorie.nom }}
+                                    </strong>
+                                </td>
+
+                                <td>
+
+                                  <a href="{% url 'vente:modifier_categorie' categorie.id %}"
+                                     class="btn btn-sm btn-warning">
+                                          Modifier
+                                    </a>
+
+                                    <a href="{% url 'vente:supprimer_categorie' categorie.id %}"
+                                          class="btn btn-sm btn-danger">
+                                                             Supprimer
+                                     </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+                <div class="mb-4">
+
+    <h5 class="mb-3">
+        Ajouter une catégorie
+    </h5>
+
+    <form method="POST"
+          action="{% url 'vente:ajouter_categorie' %}"
+          class="row g-2">
+
+        {% csrf_token %}
+
+        <div class="col-md-8">
+
+            <input
+                type="text"
+                name="nom"
+                class="form-control"
+                placeholder="Nom de la catégorie"
+                required
+            >
+
+        </div>
+
+        <div class="col-md-4">
+
+            <button
+                type="submit"
+                class="btn btn-success">
+                + Ajouter la catégorie
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+                    Aucune catégorie enregistrée.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -3,21 +3,18 @@ from . import views
 
 app_name = 'vente'
 
+
 urlpatterns = [
 
-    # ==========================================
-    # ACCUEIL
-    # ==========================================
+    # =========================================================
+    # ACCUEIL / CATALOGUE
+    # =========================================================
 
     path(
         '',
         views.catalogue,
         name='accueil'
     ),
-
-    # ==========================================
-    # CATALOGUE
-    # ==========================================
 
     path(
         'catalogue/',
@@ -31,9 +28,10 @@ urlpatterns = [
         name='produit_detail'
     ),
 
-    # ==========================================
+
+    # =========================================================
     # PANIER
-    # ==========================================
+    # =========================================================
 
     path(
         'panier/',
@@ -59,16 +57,16 @@ urlpatterns = [
         name='vider_panier'
     ),
 
-    # Création de la commande depuis le panier
     path(
         'panier/valider/',
         views.valider_commande,
         name='valider_commande'
     ),
 
-    # ==========================================
-    # CONNEXION
-    # ==========================================
+
+    # =========================================================
+    # CONNEXION / INSCRIPTION
+    # =========================================================
 
     path(
         'connexion/',
@@ -82,9 +80,10 @@ urlpatterns = [
         name='inscription'
     ),
 
-    # ==========================================
+
+    # =========================================================
     # COMMANDES
-    # ==========================================
+    # =========================================================
 
     path(
         'commande/<int:commande_id>/',
@@ -98,7 +97,6 @@ urlpatterns = [
         name='annuler_commande'
     ),
 
-    # ⭐ NOUVELLE URL POUR VALIDER UNE COMMANDE
     path(
         'commande/<int:commande_id>/valider/',
         views.confirmer_commande,
@@ -111,37 +109,161 @@ urlpatterns = [
         name='mes_commandes'
     ),
 
-    # ==========================================
-    # TABLEAU DE BORD
-    # ==========================================
+
+    # =========================================================
+    # TABLEAU DE BORD CLIENT
+    # =========================================================
 
     path(
-        'tableau_bord/',
-        views.dashboard,
-        name='dashboard'
+        'tableau-bord/',
+        views.tableau_bord_client,
+        name='tableau_bord_client'
+    ),
+
+
+    # =========================================================
+    # TABLEAU DE BORD ADMIN
+    # =========================================================
+
+    path(
+        'tableaud-de-bord/admin/',
+        views.tableau_bord_admin,
+        name='tableau_bord_admin'
+    ),
+
+
+    # =========================================================
+    # GESTION ADMIN
+    # =========================================================
+
+    path(
+        'gestion/produits/',
+        views.gestion_produits,
+        name='gestion_produits'
+    ),
+
+    path(
+        'gestion/categories/',
+        views.gestion_categories,
+        name='gestion_categories'
+    ),
+
+    path(
+        'gestion/clients/',
+        views.gestion_clients,
+        name='gestion_clients'
+    ),
+
+    path(
+        'gestion/commandes/',
+        views.gestion_commandes,
+        name='gestion_commandes'
+    ),
+
+
+    # =========================================================
+    # GESTION DES PRODUITS - ADMIN
+    # =========================================================
+
+    path(
+        'tableau-de-bord/produit/ajouter/',
+        views.ajouter_produit,
+        name='ajouter_produit'
+    ),
+
+    path(
+        'tableau-de-bord/produit/<int:produit_id>/modifier/',
+        views.modifier_produit,
+        name='modifier_produit'
+    ),
+
+    path(
+        'tableau-de-bord/produit/<int:produit_id>/supprimer/',
+        views.supprimer_produit,
+        name='supprimer_produit'
     ),
     
     path(
-    'tableau-de-bord/',
-    views.dashboard,
-    name='dashboard'
+    'gestion/categories/',
+    views.gestion_categories,
+    name='gestion_categories'
+),
+    
+    path(
+    'gestion/categories/ajouter/',
+    views.ajouter_categorie,
+    name='ajouter_categorie'
 ),
 
 path(
-    'tableau-de-bord/produit/ajouter/',
+    'gestion/categories/modifier/<int:categorie_id>/',
+    views.modifier_categorie,
+    name='modifier_categorie'
+),
+
+path(
+    'gestion/categories/supprimer/<int:categorie_id>/',
+    views.supprimer_categorie,
+    name='supprimer_categorie'
+),
+
+
+    path(
+        'gestion/clients/ajouter/',
+        views.ajouter_client,
+        name='ajouter_client'
+    ),
+
+    path(
+        'gestion/clients/supprimer/<int:client_id>/',
+        views.supprimer_client,
+        name='supprimer_client'
+    ),
+    
+path(
+    "gestion/produits/ajouter/",
     views.ajouter_produit,
-    name='ajouter_produit'
+    name="ajouter_produit"
 ),
 
 path(
-    'tableau-de-bord/produit/<int:produit_id>/modifier/',
+    "gestion/produits/modifier/<int:produit_id>/",
     views.modifier_produit,
-    name='modifier_produit'
+    name="modifier_produit"
 ),
 
 path(
-    'tableau-de-bord/produit/<int:produit_id>/supprimer/',
+    "gestion/produits/supprimer/<int:produit_id>/",
     views.supprimer_produit,
-    name='supprimer_produit'
+    name="supprimer_produit"
 ),
+path(
+    'gestion/produits/',
+    views.gestion_produits,
+    name='gestion_produits'
+),
+
+path(
+    'gestion/commandes/<int:commande_id>/valider/',
+    views.admin_valider_commande,
+    name='admin_valider_commande'
+),
+path(
+    'gestion/commandes/reinitialiser/',
+    views.reinitialiser_commandes,
+    name='reinitialiser_commandes'
+),
+
+path(
+    "gestion/notifications/",
+    views.notifications_admin,
+    name="notifications_admin"
+),
+
+path(
+    "gestion/clients/reinitialiser/",
+    views.reinitialiser_clients,
+    name="reinitialiser_clients"
+),
+
 ]

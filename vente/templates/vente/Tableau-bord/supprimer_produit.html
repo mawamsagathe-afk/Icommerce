@@ -13,38 +13,28 @@ Supprimer le produit - Icommerce
         <div class="card-header bg-danger text-white">
 
             <h4 class="mb-0">
-
                 <i class="fa-solid fa-trash me-2"></i>
-
                 Supprimer le produit
-
             </h4>
 
         </div>
-
 
         <div class="card-body text-center">
 
             <i class="fa-solid fa-triangle-exclamation
                       text-danger fs-1 mb-3"></i>
 
-
             <h4>
                 Êtes-vous sûr de vouloir supprimer :
             </h4>
-
 
             <h3 class="fw-bold">
                 {{ produit.designation }}
             </h3>
 
-
             <p class="text-muted">
-
                 Cette action est définitive.
-
             </p>
-
 
             <form method="POST">
 
@@ -59,8 +49,7 @@ Supprimer le produit - Icommerce
 
                 </button>
 
-
-                <a href="{% url 'vente:dashboard' %}"
+                <a href="{% url 'vente:tableau_bord_admin' %}"
                    class="btn btn-secondary">
 
                     Annuler

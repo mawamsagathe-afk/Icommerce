@@ -23,9 +23,9 @@
 
         </div>
 
-       {% if user.is_authenticated and user.is_superuser %}
+      {% if user.is_authenticated and user.is_staff %}
     <div>
-        <a href="{% url 'vente:dashboard' %}"
+        <a href="{% url 'vente:tableau_bord_admin' %}"
            class="btn btn-dark">
 
             <i class="fa-solid fa-chart-line me-2"></i>

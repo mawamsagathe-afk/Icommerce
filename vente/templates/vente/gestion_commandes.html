@@ -1,0 +1,334 @@
+{% extends 'vente/base.html' %}
+
+{% block title %}
+Gestion des commandes
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="fw-bold">
+        Gestion des commandes
+    </h2>
+
+    <div class="d-flex gap-2">
+
+        <form method="POST"
+              action="{% url 'vente:reinitialiser_commandes' %}"
+              onsubmit="return confirm(
+                  'ATTENTION : toutes les commandes seront définitivement supprimées. Voulez-vous continuer ?'
+              );">
+
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="btn btn-danger">
+
+                <i class="fa-solid fa-trash me-2"></i>
+
+                Réinitialiser les commandes
+
+            </button>
+
+        </form>
+
+        <a href="{% url 'vente:tableau_bord_admin' %}"
+           class="btn btn-secondary">
+
+            Retour au tableau de bord
+
+        </a>
+
+    </div>
+
+</div>
+
+
+    {% if commandes %}
+
+        {% for commande in commandes %}
+
+            <div class="card shadow-sm mb-4">
+
+                <!-- ============================= -->
+                <!-- EN-TÊTE COMMANDE -->
+                <!-- ============================= -->
+
+                <div class="card-header">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            Commande N°{{ commande.id }}
+                        </strong>
+
+                        <span>
+                            {{ commande.date_commande|date:"d/m/Y H:i" }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <!-- ============================= -->
+                    <!-- INFORMATIONS CLIENT -->
+                    <!-- ============================= -->
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-4">
+
+                            <strong>Client :</strong><br>
+
+                            {{ commande.client.nom }}
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <strong>Email :</strong><br>
+
+                            {{ commande.client.user.email }}
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <strong>Téléphone :</strong><br>
+
+                            {{ commande.client.telephone|default:"Non renseigné" }}
+
+                        </div>
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <!-- ============================= -->
+                    <!-- PRODUITS -->
+                    <!-- ============================= -->
+
+                    <h5 class="mb-3">
+                        Produits commandés
+                    </h5>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Sous-total</th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for ligne in commande.lignes.all %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ ligne.produit.designation }}
+                                        </td>
+
+                                        <td>
+                                            {{ ligne.quantite }}
+                                        </td>
+
+                                        <td>
+                                            {{ ligne.prix_unitaire|floatformat:0 }} FCFA
+                                        </td>
+
+                                        <td>
+                                            {{ ligne.prix_unitaire|floatformat:0 }}
+                                            ×
+                                            {{ ligne.quantite }}
+                                            FCFA
+                                        </td>
+
+                                    </tr>
+
+                                {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="4"
+                                            class="text-center">
+
+                                            Aucun produit dans cette commande.
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- ============================= -->
+                    <!-- LIVRAISON -->
+                    <!-- ============================= -->
+
+                    <div class="row mt-3">
+
+                        <div class="col-md-6">
+
+                            <strong>Lieu de livraison :</strong>
+
+                            {{ commande.lieu_livraison.ville }}
+                            -
+                            {{ commande.lieu_livraison.quartier }}
+
+                        </div>
+
+
+                        <div class="col-md-3">
+
+                            <strong>Frais :</strong>
+
+                            {{ commande.lieu_livraison.frais }}
+                            FCFA
+
+                        </div>
+
+
+                        <div class="col-md-3">
+
+                            <strong>Statut :</strong>
+
+                            {% if commande.statut == 'E' %}
+
+                                <span class="badge bg-warning text-dark">
+                                    En attente
+                                </span>
+
+                            {% elif commande.statut == 'V' %}
+
+                                <span class="badge bg-primary">
+                                    Validée
+                                </span>
+
+                            {% elif commande.statut == 'L' %}
+
+                                <span class="badge bg-success">
+                                    Livrée
+                                </span>
+
+                            {% elif commande.statut == 'A' %}
+
+                                <span class="badge bg-danger">
+                                    Annulée
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ============================= -->
+                    <!-- ACTION ADMIN -->
+                    <!-- ============================= -->
+
+                    <hr>
+
+                    <div class="d-flex justify-content-end">
+
+                        {% if commande.statut == 'E' %}
+
+                            <form method="POST"
+                                  action="{% url 'vente:admin_valider_commande' commande.id %}">
+
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="btn btn-success">
+
+                                    <i class="fa-solid fa-check me-2"></i>
+
+                                    Valider la commande
+
+                                </button>
+
+                            </form>
+
+                        {% elif commande.statut == 'V' %}
+
+                            <span class="btn btn-outline-primary disabled">
+
+                                <i class="fa-solid fa-check me-2"></i>
+
+                                Commande validée
+
+                            </span>
+
+                        {% elif commande.statut == 'L' %}
+
+                            <span class="btn btn-outline-success disabled">
+
+                                <i class="fa-solid fa-truck me-2"></i>
+
+                                Commande livrée
+
+                            </span>
+
+                        {% elif commande.statut == 'A' %}
+
+                            <span class="btn btn-outline-danger disabled">
+
+                                <i class="fa-solid fa-xmark me-2"></i>
+
+                                Commande annulée
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <div class="alert alert-info">
+
+            <i class="fa-solid fa-info-circle me-2"></i>
+
+            Aucune commande enregistrée.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
