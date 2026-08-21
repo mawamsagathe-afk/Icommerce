@@ -8,165 +8,179 @@ Tableau de bord - Icommerce
 
 <div class="container-fluid py-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- ===================================================== -->
+    <!-- EN-TÊTE -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
         <div>
-        <h1 class="fw-bold">
-            <i class="fa-solid fa-chart-line me-2"></i>
-            Tableau de bord
-        </h1>
+            <h1 class="fw-bold mb-1">
+                <i class="fa-solid fa-chart-line me-2"></i>
+                Tableau de bord
+            </h1>
 
-        <p class="text-muted">
-            Gestion de votre boutique Icommerce
-        </p>
+            <p class="text-muted mb-0">
+                Gestion de votre boutique Icommerce
+            </p>
+        </div>
 
-        <a href="{% url 'vente:notifications_admin' %}"
-   class="btn btn-outline-primary position-relative">
+        <div class="mt-3 mt-md-0">
 
-    🔔 Notifications
+            <a href="{% url 'vente:notifications_admin' %}"
+               class="btn btn-outline-primary position-relative">
 
-    {% if notifications_non_lues > 0 %}
+                <i class="fa-solid fa-bell me-1"></i>
+                Notifications
 
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {% if notifications_non_lues > 0 %}
 
-            {{ notifications_non_lues }}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
 
-        </span>
+                        {{ notifications_non_lues }}
 
-    {% endif %}
+                    </span>
 
-</a>
+                {% endif %}
+
+            </a>
+
+        </div>
+
     </div>
+
 
     <!-- ===================================================== -->
-<!-- MENU ADMINISTRATION -->
-<!-- ===================================================== -->
+    <!-- MENU ADMINISTRATION -->
+    <!-- ===================================================== -->
 
+    <div class="row g-4 mb-4">
 
-<div class="row g-4 mb-4">
+        <!-- PRODUITS -->
 
-    <!-- PRODUITS -->
-    <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-3">
 
-        <a href="{% url 'vente:gestion_produits' %}"
-           class="text-decoration-none">
+            <a href="{% url 'vente:gestion_produits' %}"
+               class="text-decoration-none">
 
-            <div class="card shadow-sm border-0 h-100">
+                <div class="card shadow-sm border-0 h-100">
 
-                <div class="card-body text-center">
+                    <div class="card-body text-center">
 
-                    <i class="fa-solid fa-box fa-3x text-success mb-3"></i>
+                        <i class="fa-solid fa-box fa-3x text-success mb-3"></i>
 
-                    <h5 class="fw-bold text-dark">
-                        Produits
-                    </h5>
+                        <h5 class="fw-bold text-dark">
+                            Produits
+                        </h5>
 
-                    <p class="text-muted mb-0">
-                        Ajouter, modifier et supprimer
-                    </p>
+                        <p class="text-muted mb-0">
+                            Ajouter, modifier et supprimer
+                        </p>
+
+                    </div>
 
                 </div>
 
-            </div>
+            </a>
 
-        </a>
+        </div>
+
+
+        <!-- CATÉGORIES -->
+
+        <div class="col-md-6 col-lg-3">
+
+            <a href="{% url 'vente:gestion_categories' %}"
+               class="text-decoration-none">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-body text-center">
+
+                        <i class="fa-solid fa-tags fa-3x text-warning mb-3"></i>
+
+                        <h5 class="fw-bold text-dark">
+                            Catégories
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Gérer les catégories
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- CLIENTS -->
+
+        <div class="col-md-6 col-lg-3">
+
+            <a href="{% url 'vente:gestion_clients' %}"
+               class="text-decoration-none">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-body text-center">
+
+                        <i class="fa-solid fa-users fa-3x text-primary mb-3"></i>
+
+                        <h5 class="fw-bold text-dark">
+                            Clients
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Consulter et modifier les clients
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- COMMANDES -->
+
+        <div class="col-md-6 col-lg-3">
+
+            <a href="{% url 'vente:gestion_commandes' %}"
+               class="text-decoration-none">
+
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="card-body text-center">
+
+                        <i class="fa-solid fa-cart-shopping fa-3x text-danger mb-3"></i>
+
+                        <h5 class="fw-bold text-dark">
+                            Commandes
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Gérer les commandes
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
 
     </div>
 
 
-    <!-- CATEGORIES -->
-    <div class="col-md-6 col-lg-3">
-
-        <a href="{% url 'vente:gestion_categories' %}"
-           class="text-decoration-none">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="fa-solid fa-tags fa-3x text-warning mb-3"></i>
-
-                    <h5 class="fw-bold text-dark">
-                        Catégories
-                    </h5>
-
-                    <p class="text-muted mb-0">
-                        Gérer les catégories
-                    </p>
-
-                </div>
-
-            </div>
-
-        </a>
-
-    </div>
-
-
-    <!-- CLIENTS -->
-    <div class="col-md-6 col-lg-3">
-
-        <a href="{% url 'vente:gestion_clients' %}"
-           class="text-decoration-none">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="fa-solid fa-users fa-3x text-primary mb-3"></i>
-
-                    <h5 class="fw-bold text-dark">
-                        Clients
-                    </h5>
-
-                    <p class="text-muted mb-0">
-                        Consulter et modifier les clients
-                    </p>
-
-                </div>
-
-            </div>
-
-        </a>
-
-    </div>
-
-
-    <!-- COMMANDES -->
-    <div class="col-md-6 col-lg-3">
-
-        <a href="{% url 'vente:gestion_commandes' %}"
-           class="text-decoration-none">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body text-center">
-
-                    <i class="fa-solid fa-cart-shopping fa-3x text-danger mb-3"></i>
-
-                    <h5 class="fw-bold text-dark">
-                        Commandes
-                    </h5>
-
-                    <p class="text-muted mb-0">
-                        Gérer les commandes
-                    </p>
-
-                </div>
-
-            </div>
-
-        </a>
-
-    </div>
-
-</div>
- 
-
-</div>
-
-
-    <!-- STATISTIQUES -->
+    <!-- ===================================================== -->
+    <!-- STATISTIQUES PRINCIPALES -->
+    <!-- ===================================================== -->
 
     <div class="row g-4 mb-4">
 
@@ -178,20 +192,24 @@ Tableau de bord - Icommerce
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
 
                         <div>
+
                             <p class="text-muted mb-1">
                                 Produits
                             </p>
 
-                            <h2 class="fw-bold">
+                            <h2 class="fw-bold mb-0">
                                 {{ nombre_produits }}
                             </h2>
+
                         </div>
 
                         <div class="fs-1 text-warning">
+
                             <i class="fa-solid fa-box"></i>
+
                         </div>
 
                     </div>
@@ -211,7 +229,7 @@ Tableau de bord - Icommerce
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
 
                         <div>
 
@@ -219,7 +237,7 @@ Tableau de bord - Icommerce
                                 Clients
                             </p>
 
-                            <h2 class="fw-bold">
+                            <h2 class="fw-bold mb-0">
                                 {{ nombre_clients }}
                             </h2>
 
@@ -248,7 +266,7 @@ Tableau de bord - Icommerce
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
 
                         <div>
 
@@ -256,7 +274,7 @@ Tableau de bord - Icommerce
                                 Commandes
                             </p>
 
-                            <h2 class="fw-bold">
+                            <h2 class="fw-bold mb-0">
                                 {{ nombre_commandes }}
                             </h2>
 
@@ -277,7 +295,7 @@ Tableau de bord - Icommerce
         </div>
 
 
-        <!-- CHIFFRE AFFAIRES -->
+        <!-- CHIFFRE D'AFFAIRES -->
 
         <div class="col-md-6 col-xl-3">
 
@@ -285,7 +303,7 @@ Tableau de bord - Icommerce
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
 
                         <div>
 
@@ -293,8 +311,8 @@ Tableau de bord - Icommerce
                                 Chiffre d'affaires
                             </p>
 
-                            <h2 class="fw-bold">
-                                {{ chiffre_affaires }} FCFA
+                            <h2 class="fw-bold mb-0">
+                                {{ chiffre_affaires|floatformat:0 }} FCFA
                             </h2>
 
                         </div>
@@ -316,19 +334,150 @@ Tableau de bord - Icommerce
     </div>
 
 
-    <!-- COMMANDES -->
+    <!-- ===================================================== -->
+    <!-- STOCK + ALERTE -->
+    <!-- ===================================================== -->
 
-    <div class="row g-4">
+    <div class="row g-4 mb-4">
+
+        <!-- VALEUR ACHAT -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Valeur du stock à l'achat
+                    </p>
+
+                    <h2 class="fw-bold text-primary">
+                        {{ valeur_stock_achat|floatformat:0 }}
+                        FCFA
+                    </h2>
+
+                    <i class="fa-solid fa-warehouse fs-1 text-primary"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VALEUR VENTE -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Valeur totale du stock
+                    </p>
+
+                    <h2 class="fw-bold text-success">
+                        {{ valeur_stock_vente|floatformat:0 }}
+                        FCFA
+                    </h2>
+
+                    <i class="fa-solid fa-coins fs-1 text-success"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+    <!-- ===================================================== -->
+    <!-- BÉNÉFICE DU STOCK -->
+    <!-- ===================================================== -->
+
+          <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Bénéfice potentiel du stock
+                    </p>
+
+                    <h2 class="fw-bold text-warning">
+                        {{ benefice_stock_total|floatformat:0 }}
+                        FCFA
+                    </h2>
+
+                    <i class="fa-solid fa-chart-line fs-1 text-warning"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ALERTE -->
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="text-muted mb-1">
+                                Alerte stock
+                            </p>
+
+                            <h2 class="fw-bold text-danger">
+                                {{ quantite_alerte }}
+                            </h2>
+
+                            <small class="text-muted">
+                                Produit(s) à réapprovisionner
+                            </small>
+
+                        </div>
+
+                        <div class="fs-1 text-danger">
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- ÉTAT DES COMMANDES -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
 
         <div class="col-lg-8">
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 h-100">
 
                 <div class="card-header bg-dark text-white">
 
                     <h5 class="mb-0">
+
                         <i class="fa-solid fa-cart-shopping me-2"></i>
+
                         État des commandes
+
                     </h5>
 
                 </div>
@@ -337,49 +486,61 @@ Tableau de bord - Icommerce
 
                     <div class="row text-center">
 
-                        <div class="col-md-3">
+
+                        <!-- ATTENTE -->
+
+                        <div class="col-6 col-md-3 mb-3 mb-md-0">
 
                             <h3 class="text-warning">
                                 {{ commandes_attente }}
                             </h3>
 
-                            <p>
+                            <p class="mb-0">
                                 En attente
                             </p>
 
                         </div>
 
-                        <div class="col-md-3">
+
+                        <!-- VALIDÉES -->
+
+                        <div class="col-6 col-md-3 mb-3 mb-md-0">
 
                             <h3 class="text-primary">
                                 {{ commandes_validees }}
                             </h3>
 
-                            <p>
+                            <p class="mb-0">
                                 Validées
                             </p>
 
                         </div>
 
-                        <div class="col-md-3">
+
+                        <!-- LIVRÉES -->
+
+                        <div class="col-6 col-md-3">
 
                             <h3 class="text-success">
                                 {{ commandes_livrees }}
                             </h3>
 
-                            <p>
+                            <p class="mb-0">
                                 Livrées
                             </p>
 
                         </div>
 
-                        <div class="col-md-3">
+
+                        <!-- ANNULÉES -->
+
+                        <div class="col-6 col-md-3">
 
                             <h3 class="text-danger">
                                 {{ commandes_annulees }}
                             </h3>
 
-                            <p>
+                            <p class="mb-0">
                                 Annulées
                             </p>
 
@@ -398,7 +559,7 @@ Tableau de bord - Icommerce
 
         <div class="col-lg-4">
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 h-100">
 
                 <div class="card-header bg-success text-white">
 
@@ -406,7 +567,7 @@ Tableau de bord - Icommerce
 
                         <i class="fa-solid fa-boxes-stacked me-2"></i>
 
-                        Stock
+                        Gestion du stock
 
                     </h5>
 
@@ -422,9 +583,14 @@ Tableau de bord - Icommerce
                         Produits disponibles en stock
                     </p>
 
-                   <a href="{% url 'vente:gestion_produits' %}" class="btn btn-primary">
-                             Gérer le stock
-                   </a>
+                    <a href="{% url 'vente:gestion_produits' %}"
+                       class="btn btn-primary">
+
+                        <i class="fa-solid fa-gear me-1"></i>
+
+                        Gérer le stock
+
+                    </a>
 
                 </div>
 
@@ -434,29 +600,70 @@ Tableau de bord - Icommerce
 
     </div>
 
-</div>
-<!-- STATISTIQUES STOCK -->
+
+    <!-- ===================================================== -->
+    <!-- GRAPHIQUES -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
 
 
-<div class="row g-4 mb-4">
+        <!-- DIAGRAMME CIRCULAIRE -->
 
-    <!-- VALEUR ACHAT -->
+        <div class="col-lg-5">
 
-    <div class="col-md-6 col-xl-4">
+            <div class="card shadow-sm border-0 h-100">
 
-        <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white">
 
-            <div class="card-body">
+                    <h5 class="mb-0">
 
-                <p class="text-muted mb-1">
-                    Valeur du stock à l'achat
-                </p>
+                        <i class="fa-solid fa-chart-pie me-2"></i>
 
-                <h2 class="fw-bold text-primary">
-                    {{ valeur_stock_achat|floatformat:0 }} FCFA
-                </h2>
+                        Répartition du stock
 
-                <i class="fa-solid fa-warehouse fs-1 text-primary"></i>
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="stockChart"
+                            height="300">
+                    </canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COURBE CHIFFRE AFFAIRES -->
+
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-header bg-dark text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="fa-solid fa-chart-line me-2"></i>
+
+                        Évolution du chiffre d'affaires
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="chiffreAffairesChart"
+                            height="300">
+                    </canvas>
+
+                </div>
 
             </div>
 
@@ -465,268 +672,708 @@ Tableau de bord - Icommerce
     </div>
 
 
-    <!-- VALEUR VENTE -->
+    <!-- ===================================================== -->
+    <!-- PRODUITS EN ALERTE -->
+    <!-- ===================================================== -->
 
-    <div class="col-md-6 col-xl-4">
+    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="card shadow-sm border-0 h-100">
-
-            <div class="card-body">
-
-                <p class="text-muted mb-1">
-                    Valeur totale du stock
-                </p>
-
-                <h2 class="fw-bold text-success">
-                    {{ valeur_stock_vente|floatformat:0 }} FCFA
-                </h2>
-
-                <i class="fa-solid fa-coins fs-1 text-success"></i>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- BENEFICE -->
-
-    <div class="col-md-6 col-xl-4">
-
-        <div class="card shadow-sm border-0 h-100">
-
-            <div class="card-body">
-
-                <p class="text-muted mb-1">
-                    Bénéfice potentiel du stock
-                </p>
-
-                <h2 class="fw-bold text-warning">
-                    {{ benefice_stock_total|floatformat:0 }} FCFA
-                </h2>
-
-                <i class="fa-solid fa-chart-line fs-1 text-warning"></i>         
-            </div>
-        </div>
-
-</div>
-<!-- ===================================================== -->
-<!-- GESTION DES PRODUITS -->
-<!-- ===================================================== -->
-
-<div class="card shadow-sm border-0 mt-4">
-
-    <div class="card-header bg-dark text-white">
-
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="card-header bg-danger text-white">
 
             <h5 class="mb-0">
 
-                <i class="fa-solid fa-boxes-stacked me-2"></i>
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>
 
-                Gestion des produits
+                Produits nécessitant une attention
 
             </h5>
 
+        </div>
+
+        <div class="card-body">
+
+            {% if produits_alerte %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Produit
+                                </th>
+
+                                <th>
+                                    Stock
+                                </th>
+
+                                <th>
+                                    État
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for produit in produits_alerte %}
+
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+                                        {{ produit.designation }}
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="badge bg-danger">
+
+                                        {{ produit.stock }}
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    {% if produit.stock == 0 %}
+
+                                        <span class="badge bg-danger">
+                                            Rupture
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Stock faible
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    <a href="{% url 'vente:modifier_produit' produit.id %}"
+                                       class="btn btn-sm btn-warning">
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                        Réapprovisionner
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-success mb-0">
+
+                    <i class="fa-solid fa-circle-check me-2"></i>
+
+                    Aucun produit n'est actuellement en alerte.
+
+                </div>
+
+            {% endif %}
 
         </div>
 
     </div>
 
 
-    <div class="card-body p-0">
+    <!-- ===================================================== -->
+    <!-- LISTE DES PRODUITS -->
+    <!-- ===================================================== -->
 
-        <div class="table-responsive">
+    <div class="card shadow-sm border-0 mb-4">
 
-            <table class="table table-hover align-middle mb-0">
+        <div class="card-header bg-dark text-white">
 
-                <thead class="table-light">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
 
-                    <tr>
+        <h5 class="mb-0">
 
-                        <th>Produit</th>
+            <i class="fa-solid fa-boxes-stacked me-2"></i>
 
-                        <th>Prix achat</th>
+            Liste des produits
 
-                        <th>Prix vente</th>
+        </h5>
 
-                        <th>Stock</th>
 
-                        <th>Bénéfice unitaire</th>
+        <div class="d-flex flex-wrap gap-2">
 
-                        <th>Valeur stock</th>
+            <!-- FILTRE CATÉGORIE -->
 
-                        <th>Bénéfice potentiel</th>
+       <form method="GET"
+      action="{% url 'vente:tableau_bord_admin' %}"
+      class="d-flex gap-2">
 
-                        <th>Actions</th>
+    <input type="text"
+           name="categorie"
+           value="{{ categorie_selectionnee }}"
+           class="form-control form-control-sm"
+           placeholder="Entrer une catégorie..."
+           list="liste-categories">
 
-                    </tr>
+    <datalist id="liste-categories">
 
-                </thead>
+        {% for categorie in categories %}
 
+            <option value="{{ categorie.nom }}">
 
-                <tbody>
+        {% endfor %}
 
-                    {% for item in produits_data %}
+    </datalist>
 
-                    <tr>
+    <button type="submit"
+            class="btn btn-sm btn-primary">
 
-                        <td>
+        <i class="fa-solid fa-search me-1"></i>
 
-                            <strong>
-                                {{ item.produit.designation }}
-                            </strong>
+        Rechercher
 
-                        </td>
+    </button>
 
 
-                        <td>
+    {% if categorie_selectionnee %}
 
-                            {{ item.produit.prix_achat|floatformat:0 }}
-                            FCFA
+        <a href="{% url 'vente:tableau_bord_admin' %}"
+           class="btn btn-sm btn-secondary">
 
-                        </td>
+            <i class="fa-solid fa-xmark me-1"></i>
 
+            Toutes
 
-                        <td>
+        </a>
 
-                            {{ item.produit.prix_vente|floatformat:0 }}
-                            FCFA
+    {% endif %}
 
-                        </td>
+</form>
 
 
-                        <td>
+            <!-- BOUTON GÉRER -->
 
-                            {% if item.produit.stock > 0 %}
+            <a href="{% url 'vente:gestion_produits' %}"
+               class="btn btn-sm btn-light">
 
-                                <span class="badge bg-success">
+                <i class="fa-solid fa-gear me-1"></i>
 
-                                    {{ item.produit.stock }}
+                Gérer
 
-                                </span>
-
-                            {% else %}
-
-                                <span class="badge bg-danger">
-
-                                    Rupture
-
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-
-                            {% if item.benefice_unitaire > 0 %}
-
-                                <span class="text-success fw-bold">
-
-                                    +{{ item.benefice_unitaire|floatformat:0 }}
-                                    FCFA
-
-                                </span>
-
-                            {% elif item.benefice_unitaire < 0 %}
-
-                                <span class="text-danger fw-bold">
-
-                                    {{ item.benefice_unitaire|floatformat:0 }}
-                                    FCFA
-
-                                </span>
-
-                            {% else %}
-
-                                <span class="text-muted">
-
-                                    0 FCFA
-
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-
-                            {{ item.valeur_vente|floatformat:0 }}
-                            FCFA
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="text-success fw-bold">
-
-                                {{ item.benefice_total|floatformat:0 }}
-                                FCFA
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="d-flex gap-1">
-
-                                <a href="{% url 'vente:modifier_produit' item.produit.id %}"
-                                   class="btn btn-sm btn-warning">
-
-                                    <i class="fa-solid fa-pen"></i>
-
-                                </a>
-
-
-                                <a href="{% url 'vente:supprimer_produit' item.produit.id %}"
-                                   class="btn btn-sm btn-danger">
-
-                                    <i class="fa-solid fa-trash"></i>
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                    {% empty %}
-
-                    <tr>
-
-                        <td colspan="8"
-                            class="text-center py-5">
-
-                            <i class="fa-solid fa-box-open fs-1 text-muted"></i>
-
-                            <p class="text-muted mt-3">
-
-                                Aucun produit disponible.
-
-                            </p>
-
-                        </td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
+            </a>
 
         </div>
 
     </div>
 
 </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Produit
+                            </th>
+
+                            <th>
+                                Prix achat
+                            </th>
+
+                            <th>
+                                Prix vente
+                            </th>
+
+                            <th>
+                                Stock
+                            </th>
+
+                            <th>
+                                Bénéfice unitaire
+                            </th>
+
+                            <th>
+                                Valeur stock
+                            </th>
+
+                            <th>
+                                Bénéfice potentiel
+                            </th>
+
+                            <th>
+                                État
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in produits_data %}
+
+                        <tr>
+
+                            <td>
+                                {{ item.produit.id }}
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ item.produit.designation }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                {{ item.produit.prix_achat|floatformat:0 }}
+                                FCFA
+
+                            </td>
+
+
+                            <td>
+
+                                {{ item.produit.prix_vente|floatformat:0 }}
+                                FCFA
+
+                            </td>
+
+
+                            <td>
+
+                                {% if item.produit.stock == 0 %}
+
+                                    <span class="badge bg-danger">
+
+                                        0
+
+                                    </span>
+
+                                {% elif item.produit.stock <= 5 %}
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        {{ item.produit.stock }}
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+
+                                        {{ item.produit.stock }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if item.benefice_unitaire > 0 %}
+
+                                    <span class="text-success fw-bold">
+
+                                        +{{ item.benefice_unitaire|floatformat:0 }}
+                                        FCFA
+
+                                    </span>
+
+                                {% elif item.benefice_unitaire < 0 %}
+
+                                    <span class="text-danger fw-bold">
+
+                                        {{ item.benefice_unitaire|floatformat:0 }}
+                                        FCFA
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+
+                                        0 FCFA
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ item.valeur_vente|floatformat:0 }}
+                                FCFA
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="text-success fw-bold">
+
+                                    {{ item.benefice_total|floatformat:0 }}
+                                    FCFA
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if item.produit.stock == 0 %}
+
+                                    <span class="badge bg-danger">
+                                        Rupture
+                                    </span>
+
+                                {% elif item.produit.stock <= 5 %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Stock faible
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        Disponible
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="d-flex gap-1">
+
+                                    <a href="{% url 'vente:modifier_produit' item.produit.id %}"
+                                       class="btn btn-sm btn-warning"
+                                       title="Modifier">
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                    </a>
+
+
+                                    <a href="{% url 'vente:supprimer_produit' item.produit.id %}"
+                                       class="btn btn-sm btn-danger"
+                                       title="Supprimer">
+
+                                        <i class="fa-solid fa-trash"></i>
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="10"
+                                class="text-center py-5">
+
+                                <i class="fa-solid fa-box-open fs-1 text-muted"></i>
+
+                                <p class="text-muted mt-3 mb-0">
+
+                                    Aucun produit disponible.
+
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CHART.JS -->
+<!-- ========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+/* =========================================================
+   DIAGRAMME CIRCULAIRE DU STOCK
+   ========================================================= */
+
+const stockLabels = [
+
+    {% for item in stock_data %}
+
+        "{{ item.designation|escapejs }}",
+
+    {% endfor %}
+
+];
+
+
+const stockValues = [
+
+    {% for item in stock_data %}
+
+        {{ item.stock }},
+
+    {% endfor %}
+
+];
+
+
+const stockCanvas =
+    document.getElementById("stockChart");
+
+
+if (stockCanvas) {
+
+    new Chart(stockCanvas, {
+
+        type: "pie",
+
+        data: {
+
+            labels: stockLabels,
+
+            datasets: [{
+
+                label: "Stock",
+
+                data: stockValues
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom"
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   COURBE DU CHIFFRE D'AFFAIRES
+   ========================================================= */
+
+const moisCA = [
+
+    {% for item in chiffre_affaires_mensuel %}
+
+        "{{ item.mois|date:'M Y' }}",
+
+    {% endfor %}
+
+];
+
+
+const valeursCA = [
+
+    {% for item in chiffre_affaires_mensuel %}
+
+        {{ item.total|default:0 }},
+
+    {% endfor %}
+
+];
+
+
+const caCanvas =
+    document.getElementById("chiffreAffairesChart");
+
+
+if (caCanvas) {
+
+    new Chart(caCanvas, {
+
+        type: "line",
+
+        data: {
+
+            labels: moisCA,
+
+            datasets: [{
+
+                label: "Chiffre d'affaires (FCFA)",
+
+                data: valeursCA,
+
+                tension: 0.3,
+
+                fill: true
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+
+                intersect: false,
+
+                mode: "index"
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return value.toLocaleString(
+                                "fr-FR"
+                            ) + " FCFA";
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                legend: {
+
+                    display: true
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+</script>
+
+
+<!-- ========================================================= -->
+<!-- STYLE LOCAL DU DASHBOARD -->
+<!-- ========================================================= -->
+
+<style>
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    .table th {
+        white-space: nowrap;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    #stockChart {
+        min-height: 300px;
+    }
+
+    #chiffreAffairesChart {
+        min-height: 300px;
+    }
+
+</style>
 
 {% endblock %}

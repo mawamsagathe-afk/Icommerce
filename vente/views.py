@@ -4,14 +4,15 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db import connection, transaction
+from django.db.models import (Sum,F,ExpressionWrapper,DecimalField,)
+from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.admin.views.decorators import staff_member_required
-
 from .forms import ProduitForm
+from .models import (Produit,Client,Commande,Categorie,)
 from .models import (
     Produit,
     Categorie,
@@ -19,11 +20,6 @@ from .models import (
     LieuLivraison,
     Commande,
     LigneCommande,
-)
-
-from .models import (
-    Client,
-    Commande,
     Notification,
 )
 
@@ -890,52 +886,113 @@ def tableau_bord_client(request):
 # TABLEAU DE BORD ADMIN
 # =========================================================
 
-@staff_member_required
+from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from django.shortcuts import render, redirect
+
+from .models import (
+    Produit,
+    Client,
+    Commande,
+    Notification,
+)
+
+
+@login_required
 def tableau_bord_admin(request):
 
-    # =====================================================
+    # =========================================================
+    # PROTECTION DU TABLEAU DE BORD ADMIN
+    # =========================================================
+
+    if not request.user.is_staff:
+        return redirect("vente:tableau_bord_client")
+
+
+    # =========================================================
+    # CATÉGORIES + FILTRE
+    # =========================================================
+
+    categories = Categorie.objects.all().order_by("nom")
+
+    categorie_selectionnee = request.GET.get(
+        "categorie",
+        ""
+    ).strip()
+
+    produits = (
+        Produit.objects
+        .select_related("categorie")
+        .all()
+    )
+
+    # Si une catégorie est saisie,
+    # afficher uniquement ses produits
+    if categorie_selectionnee:
+
+        produits = produits.filter(
+            categorie__nom__iexact=categorie_selectionnee
+        )
+
+
+    # =========================================================
     # PRODUITS
-    # =====================================================
+    # =========================================================
 
-    produits = Produit.objects.all()
-
-    nombre_produits = produits.count()
+    nombre_produits = Produit.objects.count()
 
     stock_total = sum(
         produit.stock
-        for produit in produits
+        for produit in Produit.objects.all()
     )
 
     valeur_stock_achat = sum(
         (
-            produit.prix_achat *
-            produit.stock
-        )
-        for produit in produits
+            produit.prix_achat * produit.stock
+            for produit in Produit.objects.all()
+        ),
+        Decimal("0.00")
     )
 
     valeur_stock_vente = sum(
         (
-            produit.prix_vente *
-            produit.stock
-        )
-        for produit in produits
+            produit.prix_vente * produit.stock
+            for produit in Produit.objects.all()
+        ),
+        Decimal("0.00")
     )
 
     benefice_stock_total = (
-        valeur_stock_vente -
-        valeur_stock_achat
+        valeur_stock_vente - valeur_stock_achat
     )
 
-    # =====================================================
+
+    # =========================================================
+    # DONNÉES POUR LE GRAPHIQUE DU STOCK
+    # =========================================================
+
+    stock_data = []
+
+    for produit in Produit.objects.all():
+
+        stock_data.append({
+            "designation": produit.designation,
+            "stock": produit.stock,
+        })
+
+
+    # =========================================================
     # CLIENTS
-    # =====================================================
+    # =========================================================
 
     nombre_clients = Client.objects.count()
 
-    # =====================================================
+
+    # =========================================================
     # COMMANDES
-    # =====================================================
+    # =========================================================
 
     commandes = Commande.objects.all()
 
@@ -957,24 +1014,21 @@ def tableau_bord_admin(request):
         statut="A"
     ).count()
 
-    # =====================================================
-    # CHIFFRE D'AFFAIRES
-    # =====================================================
 
-    chiffre_affaires = Decimal("0.00")
+    # =========================================================
+    # CHIFFRE D'AFFAIRES
+    # =========================================================
 
     commandes_valides = (
         commandes
         .filter(
             statut__in=["V", "L"]
         )
-        .select_related(
-            "lieu_livraison"
-        )
-        .prefetch_related(
-            "lignes"
-        )
+        .prefetch_related("lignes")
+        .select_related("lieu_livraison")
     )
+
+    chiffre_affaires = Decimal("0.00")
 
     for commande in commandes_valides:
 
@@ -985,16 +1039,76 @@ def tableau_bord_admin(request):
                 ligne.quantite
             )
 
-        # Ajouter les frais de livraison
         if commande.lieu_livraison:
 
             chiffre_affaires += (
                 commande.lieu_livraison.frais
             )
 
-    # =====================================================
-    # DONNÉES PRODUITS
-    # =====================================================
+
+    # =========================================================
+    # CHIFFRE D'AFFAIRES MENSUEL
+    # =========================================================
+
+    chiffre_affaires_mensuel = []
+
+    commandes_mensuelles = (
+        Commande.objects
+        .filter(
+            statut__in=["V", "L"]
+        )
+        .prefetch_related("lignes")
+        .select_related("lieu_livraison")
+        .order_by("date_commande")
+    )
+
+    ca_par_mois = {}
+
+    for commande in commandes_mensuelles:
+
+        mois = commande.date_commande.replace(
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
+            microsecond=0
+        )
+
+        total_commande = Decimal("0.00")
+
+        for ligne in commande.lignes.all():
+
+            total_commande += (
+                ligne.prix_unitaire *
+                ligne.quantite
+            )
+
+        if commande.lieu_livraison:
+
+            total_commande += (
+                commande.lieu_livraison.frais
+            )
+
+        if mois not in ca_par_mois:
+
+            ca_par_mois[mois] = Decimal("0.00")
+
+        ca_par_mois[mois] += total_commande
+
+
+    for mois, total in sorted(
+        ca_par_mois.items()
+    ):
+
+        chiffre_affaires_mensuel.append({
+            "mois": mois,
+            "total": total,
+        })
+
+
+    # =========================================================
+    # DONNÉES DES PRODUITS
+    # =========================================================
 
     produits_data = []
 
@@ -1022,37 +1136,141 @@ def tableau_bord_admin(request):
             "benefice_total": benefice_total,
         })
 
-    # =====================================================
+
+    # =========================================================
+    # PRODUITS EN ALERTE
+    # =========================================================
+
+    produits_alerte = Produit.objects.filter(
+        stock__lte=5
+    ).order_by("stock")
+
+
+    # =========================================================
+    # QUANTITÉ EN ALERTE
+    # =========================================================
+
+    quantite_alerte = produits_alerte.count()
+
+
+    # =========================================================
+    # NOTIFICATIONS ADMIN NON LUES
+    # =========================================================
+
+    notifications_non_lues = 0
+
+    try:
+
+        notifications_non_lues = (
+            Notification.objects
+            .filter(lu=False)
+            .count()
+        )
+
+    except Exception:
+
+        notifications_non_lues = 0
+
+
+    # =========================================================
     # CONTEXTE
-    # =====================================================
+    # =========================================================
 
     context = {
+
+        # -------------------------
+        # STATISTIQUES
+        # -------------------------
+
         "nombre_produits": nombre_produits,
+
         "nombre_clients": nombre_clients,
+
         "nombre_commandes": nombre_commandes,
+
         "chiffre_affaires": chiffre_affaires,
 
+
+        # -------------------------
+        # COMMANDES
+        # -------------------------
+
         "commandes_attente": commandes_attente,
+
         "commandes_validees": commandes_validees,
+
         "commandes_livrees": commandes_livrees,
+
         "commandes_annulees": commandes_annulees,
+
+
+        # -------------------------
+        # STOCK
+        # -------------------------
 
         "stock_total": stock_total,
 
         "valeur_stock_achat": valeur_stock_achat,
+
         "valeur_stock_vente": valeur_stock_vente,
+
         "benefice_stock_total": benefice_stock_total,
 
+
+        # -------------------------
+        # GRAPHIQUE STOCK
+        # -------------------------
+
+        "stock_data": stock_data,
+
+
+        # -------------------------
+        # GRAPHIQUE CA
+        # -------------------------
+
+        "chiffre_affaires_mensuel":
+            chiffre_affaires_mensuel,
+
+
+        # -------------------------
+        # PRODUITS
+        # -------------------------
+
         "produits_data": produits_data,
+
+        "produits_alerte": produits_alerte,
+
+        "quantite_alerte": quantite_alerte,
+
+
+        # -------------------------
+        # CATÉGORIES
+        # -------------------------
+
+        "categories": categories,
+
+        "categorie_selectionnee":
+            categorie_selectionnee,
+
+
+        # -------------------------
+        # NOTIFICATIONS
+        # -------------------------
+
+        "notifications_non_lues":
+            notifications_non_lues,
     }
+
+
+    # =========================================================
+    # AFFICHAGE
+    # =========================================================
 
     return render(
         request,
         "vente/tableau_bord_admin.html",
-        context,
+        context
     )
-
-
 # =========================================================
 # ADMIN : PRODUITS
 # =========================================================
@@ -1474,43 +1692,6 @@ def ajouter_client(request):
         request,
         "vente/ajouter_client.html",
     )
-
-
-@staff_member_required
-def supprimer_client(request, client_id):
-
-    client = get_object_or_404(
-        Client,
-        id=client_id,
-    )
-
-    if request.method == "POST":
-
-        user = client.user
-
-        client.delete()
-
-        # Supprimer également le compte utilisateur
-        if user:
-            user.delete()
-
-        messages.success(
-            request,
-            "Le client a été supprimé avec succès.",
-        )
-
-        return redirect(
-            "vente:gestion_clients"
-        )
-
-    return render(
-        request,
-        "vente/confirmer_suppression_client.html",
-        {
-            "client": client,
-        },
-    )
-
 
 # =========================================================
 # ADMIN : COMMANDES
